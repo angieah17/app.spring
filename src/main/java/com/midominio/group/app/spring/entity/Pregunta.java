@@ -31,7 +31,7 @@ public abstract class Pregunta {
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
     
-    @Column(name = "activa") //esto permitirá el borrado lógico, es decir, no borra como tal la pregunta de la BD
+    @Column(name = "activa") //esto permitirá el borrado lógico, es decir, no borra como tal la pregunta de la BD, la esconde
     private Boolean activa = true;
     
     @PrePersist
@@ -42,6 +42,7 @@ public abstract class Pregunta {
     // Método abstracto que cada tipo de pregunta implementará
     public abstract String getTipoPregunta();
     
+    //Para mantener la persistencia en el mapeo de datos 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
