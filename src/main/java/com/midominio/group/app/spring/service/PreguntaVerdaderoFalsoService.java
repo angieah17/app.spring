@@ -1,10 +1,9 @@
 package com.midominio.group.app.spring.service;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,181 +11,67 @@ import com.midominio.group.app.spring.entity.PreguntaVerdaderoFalso;
 import com.midominio.group.app.spring.repository.PreguntaVerdaderoFalsoRepository;
 
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Service específico para preguntas de tipo Verdadero/Falso.
+ * Solo contiene métodos que son exclusivos de este tipo de pregunta.
+ * 
+ * Para operaciones comunes (listar, filtrar, eliminar, etc.) usar PreguntaService (genérico).
+ * 
+ * Usado en:
+ * - Controllers REST para crear/actualizar preguntas V/F
+ * - Validación de respuestas en tests
+ * - Generación de tests aleatorios solo con preguntas V/F
+ */
 @Service
-@Transactional //garantiza el principio ACID en la BD
+@Transactional
 public class PreguntaVerdaderoFalsoService {
 
     @Autowired
     private PreguntaVerdaderoFalsoRepository repository;
-    
-    //I. MÉTODOS DERIVADOS DE Spring Data JPA
-    
-    //1. Lista todas las preguntas activas
-    /**
-     * Obtiene solo las preguntas activas con paginación
-     * Usado en: Vista pública (mostrar preguntas disponibles para tests)
-     */
-    public Page<PreguntaVerdaderoFalso> listarActivas(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaCreacion").descending());
-        return repository.findByActivaTrue(pageable);
-    }
-    
-    //2. Encuentra TODAS las preguntas por temática
-    /**
-     * Filtra TODAS las preguntas por temática (activas e inactivas)
-     * Usado en: Vista de administración (gestión completa de preguntas)
-     */
-    public Page<PreguntaVerdaderoFalso> filtrarTodasPorTematica(String tematica, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaCreacion").descending());
-        return repository.findByTematica(tematica, pageable);
-    }
-    
-    //3. Encuentra preguntas ACTIVAS por temática
-    
-    /**
-     * Filtra preguntas activas por temática
-     * Usado en: Vista pública (usuarios seleccionando temática para tests)
-     */
-    public Page<PreguntaVerdaderoFalso> filtrarActivasPorTematica(String tematica, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaCreacion").descending());
-        return repository.findByTematicaAndActivaTrue(tematica, pageable);
-    }
 
-    //4. Cuenta preguntas activas para estadisticas
-    
     /**
-     * Cuenta el total de preguntas activas
-     * Usado en: Estadísticas del dashboard de administración
-     */
-    public long contarActivas() {
-        return repository.countByActivaTrue();
-    }
-    
-    //5. Cuenta preguntas por temática para estadisticas
-    
-    /**
-     * Cuenta preguntas por temática
-     * Usado en: Estadísticas por categoría
-     */
-    public long contarPorTematica(String tematica) {
-        return repository.countByTematica(tematica);
-    }
-    
-    //6. Obtiene una pregunta por ID
-    
-    /**
-     * Obtiene una pregunta por ID
-     * Usado en: Detalle de pregunta, edición, validación de respuesta
-     */
-    public Optional<PreguntaVerdaderoFalso> obtenerPorId(Long id) {
-        return repository.findById(id);
-    }
-    
-    //7. Crea una nueva pregunta
-    
-    /**
-     * Crea una nueva pregunta
-     * Usado en: Formulario de creación en la interfaz de administración
+     * Crea una nueva pregunta de tipo Verdadero/Falso
+     * Usado en: API REST POST /api/preguntas/verdadero-falso
      */
     public PreguntaVerdaderoFalso crear(PreguntaVerdaderoFalso pregunta) {
         // Asegura que las nuevas preguntas estén activas por defecto
         if (pregunta.getActiva() == null) {
             pregunta.setActiva(true);
         }
-        return repository.save(pregunta); //guarda cambios
-    }
-    
-    //8. Elimina pregunta por ID
-    /**
-     * Elimina una pregunta (borrado físico)
-     * Usado en: Botón eliminar en la interfaz de administración
-     */
-    public void eliminar(Long id) {
-        if (!repository.existsById(id)) { //9. Comprueba si existe una pregunta
-            throw new RuntimeException("Pregunta no encontrada con id: " + id);
-        }
-        repository.deleteById(id);
-    }
-    
-   
-    
-    //II. MÉTODOS PERSONALIZADOS
-    
-    //1. Listar todas con orden dinámico
-    /**
-     * Obtiene todas las preguntas con paginación
-     * Usado en: Vista de administración (listar todas las preguntas)
-     */
-    public Page<PreguntaVerdaderoFalso> listarTodas(int page, int size, String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
-        return repository.findAll(pageable);
+        return repository.save(pregunta);
     }
 
-    //3. Buscar por texto en el enunciado
-
     /**
-     * Busca preguntas por texto en el enunciado
-     * Usado en: Barra de búsqueda en la interfaz de administración
-     */
-    public Page<PreguntaVerdaderoFalso> buscarPorTexto(String texto, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaCreacion").descending());
-        return repository.buscarPorEnunciado(texto, pageable);
-    }
-
-    //3. Actualizar una pregunta existente
-
-    /**
-     * Actualiza una pregunta existente
-     * Usado en: Formulario de edición en la interfaz de administración
+     * Actualiza una pregunta de tipo Verdadero/Falso existente
+     * Usado en: API REST PUT /api/preguntas/verdadero-falso/{id}
      */
     public PreguntaVerdaderoFalso actualizar(Long id, PreguntaVerdaderoFalso preguntaActualizada) {
-        return repository.findById(id)
+        
+    	
+    	
+    	return repository.findById(id)
             .map(preguntaExistente -> {
+                // Actualizar campos comunes (heredados de Pregunta)
                 preguntaExistente.setEnunciado(preguntaActualizada.getEnunciado());
                 preguntaExistente.setTematica(preguntaActualizada.getTematica());
+                preguntaExistente.setActiva(preguntaActualizada.getActiva());
+                
+                // Actualizar campos específicos de Verdadero/Falso
                 preguntaExistente.setRespuestaCorrecta(preguntaActualizada.getRespuestaCorrecta());
                 preguntaExistente.setExplicacion(preguntaActualizada.getExplicacion());
-                preguntaExistente.setActiva(preguntaActualizada.getActiva());
+                
                 return repository.save(preguntaExistente);
             })
             .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + id));
     }
 
-
-    // 4. Desactivar (borrado lógico)
     /**
-     * Desactiva una pregunta (borrado lógico)
-     * Usado en: Si prefieres mantener el historial de preguntas
-     */
-    public void desactivar(Long id) {
-        repository.findById(id)
-            .map(pregunta -> {
-                pregunta.setActiva(false);
-                return repository.save(pregunta);
-            })
-            .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + id));
-    }
-    
-    // 5. Reactivar pregunta
-    /**
-     * Reactiva una pregunta previamente desactivada
-     * Usado en: Restaurar preguntas en la interfaz de administración
-     */
-    public void activar(Long id) {
-        repository.findById(id)
-            .map(pregunta -> {
-                pregunta.setActiva(true);
-                return repository.save(pregunta);
-            })
-            .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + id));
-    }
-    
-    // 6. Validar respuesta del usuario
-    /**
-     * Valida la respuesta de un usuario a una pregunta
-     * Usado en: Vista de test/evaluación cuando el usuario responde
+     * Valida si la respuesta de un usuario a una pregunta V/F es correcta
+     * Usado en: Procesamiento de respuestas en tests/evaluaciones
+     * 
+     * @param idPregunta ID de la pregunta
+     * @param respuestaUsuario respuesta del usuario (true/false)
      * @return true si la respuesta es correcta
      */
     public boolean validarRespuesta(Long idPregunta, Boolean respuestaUsuario) {
@@ -195,25 +80,15 @@ public class PreguntaVerdaderoFalsoService {
             .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + idPregunta));
     }
 
-    // 7. Obtener preguntas aleatorias
     /**
-     * Obtiene preguntas aleatorias para generar un test
-     * Usado en: Generación automática de tests/evaluaciones
+     * Obtiene preguntas aleatorias de tipo Verdadero/Falso para generar un test
+     * Usado en: Generación automática de tests solo con preguntas V/F
+     * 
+     * @param cantidad número de preguntas a obtener
+     * @return lista de preguntas aleatorias
      */
     public List<PreguntaVerdaderoFalso> obtenerPreguntasAleatorias(int cantidad) {
         Pageable pageable = PageRequest.of(0, cantidad);
         return repository.findRandomPreguntas(pageable);
     }
-    
-    // 8. Obtener temáticas distintas
-    /**
-     * Obtiene todas las temáticas distintas disponibles
-     * Usado en: Dropdowns de filtros en las vistas
-     */
-    public List<String> obtenerTematicas() {
-        return repository.findDistinctTematicas();
-    }
-
-
-
 }
