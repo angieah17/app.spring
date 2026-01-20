@@ -21,8 +21,100 @@ public class PreguntaVerdaderoFalsoService {
     @Autowired
     private PreguntaVerdaderoFalsoRepository repository;
     
-    //Operaciones CRUD BÁSICAS
+    //I. MÉTODOS DERIVADOS DE Spring Data JPA
     
+    //1. Lista todas las preguntas activas
+    /**
+     * Obtiene solo las preguntas activas con paginación
+     * Usado en: Vista pública (mostrar preguntas disponibles para tests)
+     */
+    public Page<PreguntaVerdaderoFalso> listarActivas(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaCreacion").descending());
+        return repository.findByActivaTrue(pageable);
+    }
+    
+    //2. Encuentra TODAS las preguntas por temática
+    /**
+     * Filtra TODAS las preguntas por temática (activas e inactivas)
+     * Usado en: Vista de administración (gestión completa de preguntas)
+     */
+    public Page<PreguntaVerdaderoFalso> filtrarTodasPorTematica(String tematica, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaCreacion").descending());
+        return repository.findByTematica(tematica, pageable);
+    }
+    
+    //3. Encuentra preguntas ACTIVAS por temática
+    
+    /**
+     * Filtra preguntas activas por temática
+     * Usado en: Vista pública (usuarios seleccionando temática para tests)
+     */
+    public Page<PreguntaVerdaderoFalso> filtrarActivasPorTematica(String tematica, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaCreacion").descending());
+        return repository.findByTematicaAndActivaTrue(tematica, pageable);
+    }
+
+    //4. Cuenta preguntas activas para estadisticas
+    
+    /**
+     * Cuenta el total de preguntas activas
+     * Usado en: Estadísticas del dashboard de administración
+     */
+    public long contarActivas() {
+        return repository.countByActivaTrue();
+    }
+    
+    //5. Cuenta preguntas por temática para estadisticas
+    
+    /**
+     * Cuenta preguntas por temática
+     * Usado en: Estadísticas por categoría
+     */
+    public long contarPorTematica(String tematica) {
+        return repository.countByTematica(tematica);
+    }
+    
+    //6. Obtiene una pregunta por ID
+    
+    /**
+     * Obtiene una pregunta por ID
+     * Usado en: Detalle de pregunta, edición, validación de respuesta
+     */
+    public Optional<PreguntaVerdaderoFalso> obtenerPorId(Long id) {
+        return repository.findById(id);
+    }
+    
+    //7. Crea una nueva pregunta
+    
+    /**
+     * Crea una nueva pregunta
+     * Usado en: Formulario de creación en la interfaz de administración
+     */
+    public PreguntaVerdaderoFalso crear(PreguntaVerdaderoFalso pregunta) {
+        // Asegura que las nuevas preguntas estén activas por defecto
+        if (pregunta.getActiva() == null) {
+            pregunta.setActiva(true);
+        }
+        return repository.save(pregunta); //guarda cambios
+    }
+    
+    //8. Elimina pregunta por ID
+    /**
+     * Elimina una pregunta (borrado físico)
+     * Usado en: Botón eliminar en la interfaz de administración
+     */
+    public void eliminar(Long id) {
+        if (!repository.existsById(id)) { //9. Comprueba si existe una pregunta
+            throw new RuntimeException("Pregunta no encontrada con id: " + id);
+        }
+        repository.deleteById(id);
+    }
+    
+   
+    
+    //II. MÉTODOS PERSONALIZADOS
+    
+    //1. Listar todas con orden dinámico
     /**
      * Obtiene todas las preguntas con paginación
      * Usado en: Vista de administración (listar todas las preguntas)
@@ -32,23 +124,7 @@ public class PreguntaVerdaderoFalsoService {
         return repository.findAll(pageable);
     }
 
-    /**
-     * Obtiene solo las preguntas activas con paginación
-     * Usado en: Vista pública (mostrar preguntas disponibles para tests)
-     */
-    public Page<PreguntaVerdaderoFalso> listarActivas(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaCreacion").descending());
-        return repository.findByActivaTrue(pageable);
-    }
-
-    /**
-     * Filtra preguntas por temática
-     * Usado en: Filtros de búsqueda en vistas de administración y públicas
-     */
-    public Page<PreguntaVerdaderoFalso> filtrarPorTematica(String tematica, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaCreacion").descending());
-        return repository.findByTematicaAndActivaTrue(tematica, pageable);
-    }
+    //3. Buscar por texto en el enunciado
 
     /**
      * Busca preguntas por texto en el enunciado
@@ -59,25 +135,7 @@ public class PreguntaVerdaderoFalsoService {
         return repository.buscarPorEnunciado(texto, pageable);
     }
 
-    /**
-     * Obtiene una pregunta por ID
-     * Usado en: Detalle de pregunta, edición, validación de respuesta
-     */
-    public Optional<PreguntaVerdaderoFalso> obtenerPorId(Long id) {
-        return repository.findById(id);
-    }
-
-    /**
-     * Crea una nueva pregunta
-     * Usado en: Formulario de creación en la interfaz de administración
-     */
-    public PreguntaVerdaderoFalso crear(PreguntaVerdaderoFalso pregunta) {
-        // Asegura que las nuevas preguntas estén activas por defecto
-        if (pregunta.getActiva() == null) {
-            pregunta.setActiva(true);
-        }
-        return repository.save(pregunta);
-    }
+    //3. Actualizar una pregunta existente
 
     /**
      * Actualiza una pregunta existente
@@ -96,17 +154,8 @@ public class PreguntaVerdaderoFalsoService {
             .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + id));
     }
 
-    /**
-     * Elimina una pregunta (borrado físico)
-     * Usado en: Botón eliminar en la interfaz de administración
-     */
-    public void eliminar(Long id) {
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Pregunta no encontrada con id: " + id);
-        }
-        repository.deleteById(id);
-    }
 
+    // 4. Desactivar (borrado lógico)
     /**
      * Desactiva una pregunta (borrado lógico)
      * Usado en: Si prefieres mantener el historial de preguntas
@@ -119,7 +168,8 @@ public class PreguntaVerdaderoFalsoService {
             })
             .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + id));
     }
-
+    
+    // 5. Reactivar pregunta
     /**
      * Reactiva una pregunta previamente desactivada
      * Usado en: Restaurar preguntas en la interfaz de administración
@@ -132,7 +182,8 @@ public class PreguntaVerdaderoFalsoService {
             })
             .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + id));
     }
-
+    
+    // 6. Validar respuesta del usuario
     /**
      * Valida la respuesta de un usuario a una pregunta
      * Usado en: Vista de test/evaluación cuando el usuario responde
@@ -144,6 +195,7 @@ public class PreguntaVerdaderoFalsoService {
             .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + idPregunta));
     }
 
+    // 7. Obtener preguntas aleatorias
     /**
      * Obtiene preguntas aleatorias para generar un test
      * Usado en: Generación automática de tests/evaluaciones
@@ -152,7 +204,8 @@ public class PreguntaVerdaderoFalsoService {
         Pageable pageable = PageRequest.of(0, cantidad);
         return repository.findRandomPreguntas(pageable);
     }
-
+    
+    // 8. Obtener temáticas distintas
     /**
      * Obtiene todas las temáticas distintas disponibles
      * Usado en: Dropdowns de filtros en las vistas
@@ -161,19 +214,6 @@ public class PreguntaVerdaderoFalsoService {
         return repository.findDistinctTematicas();
     }
 
-    /**
-     * Cuenta el total de preguntas activas
-     * Usado en: Estadísticas del dashboard de administración
-     */
-    public long contarActivas() {
-        return repository.countByActivaTrue();
-    }
 
-    /**
-     * Cuenta preguntas por temática
-     * Usado en: Estadísticas por categoría
-     */
-    public long contarPorTematica(String tematica) {
-        return repository.countByTematica(tematica);
-    }
+
 }
