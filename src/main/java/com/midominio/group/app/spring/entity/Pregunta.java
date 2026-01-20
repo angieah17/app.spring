@@ -52,10 +52,7 @@ public abstract class Pregunta {
     
     //3. METODOS
 	// Método abstracto que cada tipo de pregunta implementará
-    public abstract String getTipoPregunta();
-    
-    
-    
+    public abstract String getTipoPregunta();   
 
 
 	//4. GETTERS Y SETTERS

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional //garantiza el principio ACID en la BD
 public class PreguntaVerdaderoFalsoService {
 
     @Autowired
