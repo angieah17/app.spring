@@ -1,8 +1,8 @@
 package com.midominio.group.app.spring.service;
 
+import com.midominio.group.app.spring.entity.Pregunta;
 import com.midominio.group.app.spring.exception.DatosInvalidosException;
 import com.midominio.group.app.spring.exception.RecursoNoEncontradoException;
-import com.midominio.group.app.spring.model.Pregunta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

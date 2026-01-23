@@ -3,7 +3,6 @@ package com.midominio.group.app.spring.service;
 
 import com.midominio.group.app.spring.exception.RecursoNoEncontradoException;
 import com.midominio.group.app.spring.exception.DatosInvalidosException;
-import com.midominio.group.app.spring.model.Pregunta;
 import com.midominio.group.app.spring.entity.Pregunta;
 import com.midominio.group.app.spring.repository.PreguntaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
