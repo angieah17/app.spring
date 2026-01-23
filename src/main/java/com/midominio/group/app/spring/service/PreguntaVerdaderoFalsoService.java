@@ -1,23 +1,57 @@
 package com.midominio.group.app.spring.service;
 
-
-import com.midominio.group.app.spring.exception.RecursoNoEncontradoException;
 import com.midominio.group.app.spring.entity.PreguntaVerdaderoFalso;
 import com.midominio.group.app.spring.exception.DatosInvalidosException;
+import com.midominio.group.app.spring.exception.RecursoNoEncontradoException;
 import com.midominio.group.app.spring.repository.PreguntaVerdaderoFalsoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+/**
+ * Service específico para preguntas de tipo Verdadero/Falso.
+ * Solo contiene métodos que son exclusivos de este tipo de pregunta.
+ * 
+ * Hereda de:
+ * - AbstractPreguntaService<PreguntaVerdaderoFalso> para funcionalidades comunes
+ * 
+ * Para operaciones genéricas (listar, filtrar, eliminar, etc.) usar:
+ * - PreguntaService (genérico, polimórfico para todas las preguntas)
+ * 
+ * Usado en:
+ * - PreguntaVerdaderoFalsoController (API REST) para operaciones CRUD específicas
+ * - TestService para validación de respuestas en evaluaciones
+ * - Generación de tests aleatorios con solo preguntas V/F
+ * 
+ * Excepciones lanzadas:
+ * - RecursoNoEncontradoException: cuando no existe una pregunta con el ID solicitado
+ * - DatosInvalidosException: cuando los datos de entrada no cumplen las validaciones
+ * - IllegalStateException: cuando se intenta usar una pregunta inactiva
+ */
 @Service
 @Transactional
-public class PreguntaVerdaderoFalsoService {
+public class PreguntaVerdaderoFalsoService extends AbstractPreguntaService<PreguntaVerdaderoFalso> {
     
     @Autowired
     private PreguntaVerdaderoFalsoRepository repository;
     
-
+    @Override
+    protected JpaRepository<PreguntaVerdaderoFalso, Long> getRepository() {
+        return repository;
+    }
+    
+    /**
+     * Crea una nueva pregunta de tipo Verdadero/Falso
+     * 
+     * Usado en: 
+     * - API REST POST /api/preguntas/verdadero-falso
+     * - Importación masiva de preguntas desde archivo
+     * 
+     * @param pregunta objeto con los datos de la nueva pregunta
+     * @return la pregunta guardada con su ID generado
+     * @throws DatosInvalidosException si los datos de entrada son inválidos
+     */
     public PreguntaVerdaderoFalso crear(PreguntaVerdaderoFalso pregunta) {
         // Validación preventiva de datos de entrada
         // Lanza DatosInvalidosException si hay errores
@@ -31,145 +65,114 @@ public class PreguntaVerdaderoFalsoService {
         return repository.save(pregunta);
     }
     
-
+    /**
+     * Actualiza una pregunta de tipo Verdadero/Falso existente
+     * 
+     * Usado en: 
+     * - API REST PUT /api/preguntas/verdadero-falso/{id}
+     * - Edición manual desde el panel de administración
+     * 
+     * @param id identificador de la pregunta a actualizar
+     * @param preguntaActualizada datos actualizados
+     * @return la pregunta actualizada
+     * @throws RecursoNoEncontradoException si no existe la pregunta con ese ID
+     * @throws DatosInvalidosException si los datos de entrada son inválidos
+     */
     public PreguntaVerdaderoFalso actualizar(Long id, PreguntaVerdaderoFalso preguntaActualizada) {
-        // Validación preventiva: verificar que el ID sea válido
-        if (id == null || id <= 0) {
-            throw new DatosInvalidosException("id", "El ID debe ser un número positivo");
-        }
-        
-        // Validación preventiva de datos de entrada
-        // Lanza DatosInvalidosException si hay errores
+        validarIdPositivo(id);
         validarDatosPregunta(preguntaActualizada);
         
-        // Buscar la pregunta existente con validación preventiva
-        // Lanza RecursoNoEncontradoException si no existe
         PreguntaVerdaderoFalso preguntaExistente = repository.findById(id)
             .orElseThrow(() -> new RecursoNoEncontradoException(
                 "Pregunta Verdadero/Falso", 
-                id,
-                "No se puede actualizar: pregunta no encontrada con ID: " + id
+                id
             ));
         
-        // Actualizar campos comunes (heredados de Pregunta)
         preguntaExistente.setEnunciado(preguntaActualizada.getEnunciado());
         preguntaExistente.setTematica(preguntaActualizada.getTematica());
         preguntaExistente.setActiva(preguntaActualizada.getActiva());
-        
-        // Actualizar campos específicos de Verdadero/Falso
         preguntaExistente.setRespuestaCorrecta(preguntaActualizada.getRespuestaCorrecta());
         preguntaExistente.setExplicacion(preguntaActualizada.getExplicacion());
         
         return repository.save(preguntaExistente);
     }
     
-
-     
+    /**
+     * Valida si la respuesta de un usuario a una pregunta V/F es correcta
+     * 
+     * Usado en: 
+     * - TestService al procesar respuestas de evaluaciones
+     * - Validación en tiempo real durante tests
+     * 
+     * @param idPregunta ID de la pregunta
+     * @param respuestaUsuario respuesta del usuario (true/false)
+     * @return true si la respuesta es correcta, false si es incorrecta
+     * @throws RecursoNoEncontradoException si no existe la pregunta
+     * @throws DatosInvalidosException si los parámetros son inválidos
+     * @throws IllegalStateException si la pregunta está inactiva
+     */
     public boolean validarRespuesta(Long idPregunta, Boolean respuestaUsuario) {
-        // Validación preventiva de parámetros de entrada
-        if (idPregunta == null || idPregunta <= 0) {
-            throw new DatosInvalidosException("idPregunta", "El ID de la pregunta debe ser un número positivo");
-        }
+        validarIdPositivo(idPregunta);
+        validarRespuestaUsuario(respuestaUsuario);
         
-        if (respuestaUsuario == null) {
-            throw new DatosInvalidosException("respuestaUsuario", "La respuesta del usuario no puede ser nula");
-        }
-        
-        // Buscar pregunta con validación preventiva
-        // Lanza RecursoNoEncontradoException si no existe
         PreguntaVerdaderoFalso pregunta = repository.findById(idPregunta)
             .orElseThrow(() -> new RecursoNoEncontradoException(
                 "Pregunta Verdadero/Falso",
-                idPregunta,
-                "No se puede validar respuesta: pregunta no encontrada con ID: " + idPregunta
+                idPregunta
             ));
         
-        // Validar que la pregunta esté activa antes de permitir su uso
-        // Lanza IllegalStateException (manejado como HTTP 409 en GlobalExceptionHandler)
-        if (!pregunta.getActiva()) {
-            throw new IllegalStateException(
-                "No se puede responder una pregunta inactiva con ID: " + idPregunta
-            );
-        }
-        
-        // Delegar la validación al método de la entidad
-        // Usado por: método validarRespuesta() en PreguntaVerdaderoFalso.java
+        validarPreguntaActiva(pregunta, idPregunta);
         return pregunta.validarRespuesta(respuestaUsuario);
     }
-
-     
+    
+    /**
+     * Obtiene una pregunta por ID con validación
+     * 
+     * Usado en: 
+     * - Controllers que necesitan obtener una pregunta específica
+     * - Generación de vistas de detalle de pregunta
+     * 
+     * @param id identificador de la pregunta
+     * @return la pregunta encontrada
+     * @throws RecursoNoEncontradoException si no existe
+     * @throws DatosInvalidosException si el ID es inválido
+     */
     public PreguntaVerdaderoFalso obtenerPorId(Long id) {
-        // Validación preventiva del ID
-        if (id == null || id <= 0) {
-            throw new DatosInvalidosException("id", "El ID debe ser un número positivo");
-        }
-        
-        // Buscar y lanzar excepción si no existe
-        // Manejado por GlobalExceptionHandler como HTTP 404
-        return repository.findById(id)
-            .orElseThrow(() -> new RecursoNoEncontradoException(
-                "Pregunta Verdadero/Falso",
-                id
-            ));
+        return super.obtenerPorId(id);
     }
-
-   
+    
+    /**
+     * Valida datos específicos de una pregunta Verdadero/Falso
+     * Valida: enunciado, temática, respuesta correcta y explicación
+     * 
+     * Llamado desde:
+     * - crear()
+     * - actualizar()
+     * 
+     * @param pregunta pregunta a validar
+     * @throws DatosInvalidosException si los datos son inválidos
+     */
     private void validarDatosPregunta(PreguntaVerdaderoFalso pregunta) {
-        // Validar que el objeto no sea nulo
-        if (pregunta == null) {
-            throw new DatosInvalidosException("pregunta", "La pregunta no puede ser nula");
-        }
-        
-        // Validar enunciado obligatorio
-        if (pregunta.getEnunciado() == null || pregunta.getEnunciado().trim().isEmpty()) {
-            throw new DatosInvalidosException("enunciado", "El enunciado de la pregunta es obligatorio");
-        }
-        
-        // Validar longitud mínima del enunciado
-        if (pregunta.getEnunciado().trim().length() < 10) {
-            throw new DatosInvalidosException(
-                "enunciado", 
-                "El enunciado debe tener al menos 10 caracteres"
-            );
-        }
-        
-        // Validar longitud máxima del enunciado
-        if (pregunta.getEnunciado().length() > 500) {
-            throw new DatosInvalidosException(
-                "enunciado",
-                "El enunciado no puede exceder los 500 caracteres"
-            );
-        }
-        
-        // Validar respuesta correcta obligatoria
-        if (pregunta.getRespuestaCorrecta() == null) {
+        validarNoNulo(pregunta, "Pregunta");
+        validarEnunciado(pregunta.getEnunciado());
+        validarRespuestaCorrecta(pregunta.getRespuestaCorrecta());
+        validarTematica(pregunta.getTematica());
+        validarExplicacion(pregunta.getExplicacion());
+    }
+    
+    /**
+     * Valida que la respuesta correcta no sea nula
+     * Específico de preguntas Verdadero/Falso
+     * 
+     * @param respuestaCorrecta respuesta a validar
+     * @throws DatosInvalidosException si la respuesta es nula
+     */
+    private void validarRespuestaCorrecta(Boolean respuestaCorrecta) {
+        if (respuestaCorrecta == null) {
             throw new DatosInvalidosException(
                 "respuestaCorrecta",
                 "La respuesta correcta (verdadero/falso) es obligatoria"
             );
-        }
-        
-        // Validar temática obligatoria
-        if (pregunta.getTematica() == null || pregunta.getTematica().trim().isEmpty()) {
-            throw new DatosInvalidosException("tematica", "La temática es obligatoria");
-        }
-        
-        // Validar longitud máxima de la temática
-        if (pregunta.getTematica().length() > 100) {
-            throw new DatosInvalidosException(
-                "tematica",
-                "La temática no puede exceder los 100 caracteres"
-            );
-        }
-        
-        // Validar explicación (opcional, pero si existe debe tener contenido válido)
-        if (pregunta.getExplicacion() != null && !pregunta.getExplicacion().trim().isEmpty()) {
-            if (pregunta.getExplicacion().length() > 1000) {
-                throw new DatosInvalidosException(
-                    "explicacion",
-                    "La explicación no puede exceder los 1000 caracteres"
-                );
-            }
         }
     }
 }

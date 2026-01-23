@@ -1,6 +1,5 @@
 package com.midominio.group.app.spring.entity;
 
-import org.antlr.v4.runtime.misc.NotNull;
 
 import jakarta.persistence.*;
 
