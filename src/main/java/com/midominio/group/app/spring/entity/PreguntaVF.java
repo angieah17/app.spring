@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "preguntas_verdadero_falso")
 @DiscriminatorValue("VERDADERO_FALSO")
-public class PreguntaVerdaderoFalso extends Pregunta {
+public class PreguntaVF extends Pregunta {
     
 	//1. ATRIBUTOS
     @Column(name = "respuesta_correcta", nullable = false) //este campo no puede estar vacío
@@ -17,11 +17,11 @@ public class PreguntaVerdaderoFalso extends Pregunta {
     
     //CONSTRUCTORES
     
-    public PreguntaVerdaderoFalso() {
+    public PreguntaVF() {
     	
     }
     
-    public PreguntaVerdaderoFalso(Boolean respuestaCorrecta, String explicacion) {
+    public PreguntaVF(Boolean respuestaCorrecta, String explicacion) {
 		this.respuestaCorrecta = respuestaCorrecta;
 		this.explicacion = explicacion;
 	}
