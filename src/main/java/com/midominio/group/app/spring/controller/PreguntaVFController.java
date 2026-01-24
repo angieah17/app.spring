@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.midominio.group.app.spring.entity.PreguntaVF;
 import com.midominio.group.app.spring.service.PreguntaVFService;
 
@@ -21,7 +20,12 @@ Se sirve de AbstractPreguntaService pues esta clase tiene métodos genéricos pa
 @RequestMapping("/api/preguntas/vf")
 public class PreguntaVFController {
 	
-    private PreguntaVFService service;
+	private final PreguntaVFService service;
+	
+	//inyección de dependencias por constructor y no autowired para garantizar la inmutabilidad
+    public PreguntaVFController(PreguntaVFService service) {
+        this.service = service;
+    }
     
     // GET /api/preguntas/vf?page=0&size=10
     @GetMapping
@@ -39,5 +43,6 @@ public class PreguntaVFController {
                        .orElse(ResponseEntity.notFound().build()); // cuando se hagan excepciones más específicas se pueden mostrar estados HTTP más específicos
     }
     
+
     
 }

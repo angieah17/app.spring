@@ -20,6 +20,13 @@ public abstract class AbstractPreguntaService<T extends Pregunta> {
     protected AbstractPreguntaService(JpaRepository<T, Long> repository) {
         this.repository = repository;
     }
+    
+    public T crear(T pregunta) {
+        // reglas comunes a todas las preguntas
+        pregunta.setId(null);      // seguridad: forzar INSERT
+        pregunta.setActiva(true);  // por defecto activa
+        return repository.save(pregunta);
+    }
 
     public Optional<T> findById(Long id) {
         return repository.findById(id);
