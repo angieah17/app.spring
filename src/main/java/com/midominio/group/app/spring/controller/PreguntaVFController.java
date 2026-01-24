@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.midominio.group.app.spring.entity.PreguntaVF;
@@ -43,6 +45,12 @@ public class PreguntaVFController {
                        .orElse(ResponseEntity.notFound().build()); // cuando se hagan excepciones más específicas se pueden mostrar estados HTTP más específicos
     }
     
+    // POST /api/preguntas/vf
+    @PostMapping
+    public PreguntaVF crear(@RequestBody PreguntaVF pregunta) {
+        return service.crear(pregunta); 
+        //Más adelante se puede incluir validaciones como que la respuesta no es null
+    }
 
     
 }
