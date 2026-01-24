@@ -1,7 +1,11 @@
 package com.midominio.group.app.spring.controller;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +27,16 @@ public class PreguntaVFController {
     @GetMapping
     public Page<PreguntaVF> listar(Pageable pageable) {
         return service.findAll(pageable);
+    }
+    
+    // GET /api/preguntas/vf/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<PreguntaVF> obtener(@PathVariable Long id) {
+    	
+        Optional<PreguntaVF> pregunta = service.findById(id);
+        
+        return pregunta.map(ResponseEntity::ok)
+                       .orElse(ResponseEntity.notFound().build()); // cuando se hagan excepciones más específicas se pueden mostrar estados HTTP más específicos
     }
     
     
