@@ -57,30 +57,21 @@ public class PreguntaVFController {
     // DELETE lógico /api/preguntas/vf/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<PreguntaVF> desactivar(@PathVariable Long id) {
-        try {
-            PreguntaVF pregunta = service.desactivar(id);
-            return ResponseEntity.ok(pregunta);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();// cuando se hagan excepciones más específicas se pueden mostrar estados HTTP más específicos
-        }
+        PreguntaVF pregunta = service.desactivar(id);
+        return ResponseEntity.ok(pregunta);
+        //la excepción se maneja en el servicio y en el manejador global de excepciones
     }
     
     // Activar de nuevo
     @PutMapping("/activar/{id}")
     public ResponseEntity<PreguntaVF> activar(@PathVariable Long id) {
-        try {
-            PreguntaVF pregunta = service.activar(id);
-            return ResponseEntity.ok(pregunta);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();// cuando se hagan excepciones más específicas se pueden mostrar estados HTTP más específicos
-        }
+        PreguntaVF pregunta = service.activar(id);
+        return ResponseEntity.ok(pregunta);
     }
     
     // PUT /api/preguntas/vf/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<PreguntaVF> actualizar(@PathVariable Long id, @RequestBody PreguntaVF datos) {
-           	
-    	
+    public ResponseEntity<PreguntaVF> actualizar(@PathVariable Long id, @RequestBody PreguntaVF datos) {    	
     	return service.findById(id)
     			.map(p -> {
     				p.setRespuestaCorrecta(datos.getRespuestaCorrecta());

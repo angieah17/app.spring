@@ -1,6 +1,8 @@
 package com.midominio.group.app.spring.service;
 
 import com.midominio.group.app.spring.entity.Pregunta;
+import com.midominio.group.app.spring.exception.ResourceNotFoundException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -39,7 +41,7 @@ public abstract class AbstractPreguntaService<T extends Pregunta> {
     //Se usa soft delete, en vez de eliminar campos de la base de datos, se hace un borrado lógico.
     public T desactivar(Long id) {
         T pregunta = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pregunta no encontrada")); //Por ahora excepciones genéricas, en una fase más avanzada se especificarán
+                .orElseThrow(() -> new ResourceNotFoundException("Pregunta no encontrada"));
 
         pregunta.setActiva(false);
         return repository.save(pregunta);
@@ -47,7 +49,7 @@ public abstract class AbstractPreguntaService<T extends Pregunta> {
 
     public T activar(Long id) {
         T pregunta = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pregunta no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pregunta no encontrada"));
 
         pregunta.setActiva(true);
         return repository.save(pregunta);
