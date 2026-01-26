@@ -4,6 +4,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,5 +53,15 @@ public class PreguntaVFController {
         //Más adelante se puede incluir validaciones como que la respuesta no es null
     }
 
+    // DELETE lógico /api/preguntas/vf/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<PreguntaVF> desactivar(@PathVariable Long id) {
+        try {
+            PreguntaVF pregunta = service.desactivar(id);
+            return ResponseEntity.ok(pregunta);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();// cuando se hagan excepciones más específicas se pueden mostrar estados HTTP más específicos
+        }
+    }
     
 }
