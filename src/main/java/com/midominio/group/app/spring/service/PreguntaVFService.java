@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class PreguntaVFService extends AbstractPreguntaService<PreguntaVF> {
 
+    /* El constructor es fundamental porque se necesita pasar la dependencia (repositorio) al padre (AbstractPreguntaService<PreguntaVF>).
+    Spring necesita un constructor para inyectar el repositorio específico. 
+    El autowired solo no funciona muy bien para garantizar la inmmutabilidad. */
     public PreguntaVFService(PreguntaVFRepository repository) {
         super(repository);
     }
