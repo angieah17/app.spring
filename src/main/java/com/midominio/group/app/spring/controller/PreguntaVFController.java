@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.midominio.group.app.spring.entity.PreguntaVF;
-import com.midominio.group.app.spring.repository.PreguntaRepository;
-import com.midominio.group.app.spring.repository.PreguntaVFRepository;
 import com.midominio.group.app.spring.service.PreguntaVFService;
 
 
@@ -26,17 +24,11 @@ Se sirve de AbstractPreguntaService pues esta clase tiene métodos genéricos pa
 @RequestMapping("/api/preguntas/vf")
 public class PreguntaVFController {
 
-    private final PreguntaVFRepository preguntaVFRepository;
-
-    private final PreguntaRepository preguntaRepository;
-	
 	private final PreguntaVFService service;
 	
 	//inyección de dependencias por constructor y no autowired para garantizar la inmutabilidad
-    public PreguntaVFController(PreguntaVFService service, PreguntaRepository preguntaRepository, PreguntaVFRepository preguntaVFRepository) {
+    public PreguntaVFController(PreguntaVFService service) {
         this.service = service;
-        this.preguntaRepository = preguntaRepository;
-        this.preguntaVFRepository = preguntaVFRepository;
     }
     
     // GET /api/preguntas/vf?page=0&size=10
