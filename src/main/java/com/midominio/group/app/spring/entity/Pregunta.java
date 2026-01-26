@@ -1,6 +1,9 @@
 package com.midominio.group.app.spring.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +19,9 @@ public abstract class Pregunta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @NotBlank(message = "El enunciado no puede estar vacío")
+    @NotNull(message = "El enunciado es obligatorio")
+    @Size(max = 500, message = "El enunciado no puede superar los 500 caracteres")
     @Column(nullable = false, length = 500)
     private String enunciado;
     
