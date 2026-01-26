@@ -1,6 +1,7 @@
 package com.midominio.group.app.spring.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "preguntas_verdadero_falso")
@@ -8,6 +9,7 @@ import jakarta.persistence.*;
 public class PreguntaVF extends Pregunta {
     
 	//1. ATRIBUTOS
+	@NotNull(message = "La respuesta es obligatoria")
     @Column(name = "respuesta_correcta", nullable = false) //este campo no puede estar vacío
     private Boolean respuestaCorrecta;
     
