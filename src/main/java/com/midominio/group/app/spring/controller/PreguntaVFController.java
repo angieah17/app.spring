@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.midominio.group.app.spring.entity.PreguntaVF;
 import com.midominio.group.app.spring.service.PreguntaVFService;
 
+import jakarta.validation.Valid;
+
 
 /* Controlador específico para preguntas Verdadero/Falso.
 Se sirve de AbstractPreguntaService pues esta clase tiene métodos genéricos para todas las preguntas.
@@ -49,7 +51,7 @@ public class PreguntaVFController {
     
     // POST /api/preguntas/vf
     @PostMapping
-    public PreguntaVF crear(@RequestBody PreguntaVF pregunta) {
+    public PreguntaVF crear(@Valid @RequestBody PreguntaVF pregunta) {
         return service.crear(pregunta); 
         //Más adelante se puede incluir validaciones como que la respuesta no es null
     }
@@ -71,7 +73,7 @@ public class PreguntaVFController {
     
     // PUT /api/preguntas/vf/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<PreguntaVF> actualizar(@PathVariable Long id, @RequestBody PreguntaVF datos) {    	
+    public ResponseEntity<PreguntaVF> actualizar(@PathVariable Long id, @Valid @RequestBody PreguntaVF datos) {    	
     	return service.findById(id)
     			.map(p -> {
     				p.setRespuestaCorrecta(datos.getRespuestaCorrecta());
