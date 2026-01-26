@@ -1,6 +1,7 @@
 package com.midominio.group.app.spring.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ public abstract class Pregunta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @NotBlank(message = "El enunciado no puede estar vacío")
     @Column(nullable = false, length = 500)
     private String enunciado;
     
