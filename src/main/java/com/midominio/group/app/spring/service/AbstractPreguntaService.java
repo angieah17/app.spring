@@ -56,4 +56,8 @@ public abstract class AbstractPreguntaService<T extends Pregunta> {
     public long count() {
         return repository.count();
     }
+
+    public T save(T entidad) {
+        return repository.save(entidad);
+    }
 }
