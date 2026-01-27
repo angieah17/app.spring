@@ -56,10 +56,12 @@
     </dependency>
 
     <!-- THYMELEAF + SECURITY -->
+    <!--
     <dependency>
         <groupId>org.thymeleaf.extras</groupId>
         <artifactId>thymeleaf-extras-springsecurity6</artifactId>
     </dependency>
+    -->
 
     <!-- MYSQL -->
     <dependency>

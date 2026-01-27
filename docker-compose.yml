@@ -10,8 +10,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: proyecto_final
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: apppass
     volumes:
       - mysql_data:/var/lib/mysql
 
