@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface PreguntaRepository extends JpaRepository<Pregunta, Long> {
 
-    // Buscar todas las preguntas activas
+    // Buscar todas las preguntas activas 
     Page<Pregunta> findByActivaTrue(Pageable pageable);
 
     // Buscar preguntas por temática

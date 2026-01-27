@@ -15,7 +15,7 @@ public class PreguntaVFService extends AbstractPreguntaService<PreguntaVF> {
     Spring necesita un constructor para inyectar el repositorio específico. 
     El autowired solo no funciona muy bien para garantizar la inmmutabilidad. */
     public PreguntaVFService(PreguntaVFRepository repository) {
-        super(repository);
+        super(repository); // ← Pasa PreguntaVFRepository al padre
     }
 
     // Aquí luego se añadirán métodos específicos para VF

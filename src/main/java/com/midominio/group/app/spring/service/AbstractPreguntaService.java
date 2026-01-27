@@ -11,13 +11,14 @@ import java.util.Optional;
 
 /**
  * Servicio abstracto con operaciones comunes a todas las preguntas.
- * Implementa solo lógica genérica (no lógica de negocio específica).
- * 
- * Se garantiza el tipado fuerte usando el repositorio también tipado. 
+ * @param <T> Tipo de pregunta que extiende de Pregunta
+ * Esto permite que Java sustituya todas las T por el tipo concreto en tiempo de compilación.
+ * Al final, gracias a los genéricos, todos estos métodos funcionarán con el tipo concreto de cada pregunta.
  */
 public abstract class AbstractPreguntaService<T extends Pregunta> {
 
     protected final JpaRepository<T, Long> repository;
+    // Para PreguntaVFService esto es: JpaRepository<PreguntaVF, Long>
 
     protected AbstractPreguntaService(JpaRepository<T, Long> repository) {
         this.repository = repository;
