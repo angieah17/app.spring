@@ -76,6 +76,10 @@ public class PreguntaVFController {
     public ResponseEntity<PreguntaVF> actualizar(@PathVariable Long id, @Valid @RequestBody PreguntaVF datos) {    	
     	return service.findById(id)
     			.map(p -> {
+    				// Campos heredados
+    	            p.setEnunciado(datos.getEnunciado());
+    	            p.setTematica(datos.getTematica());
+    	            // Campos específicos
     				p.setRespuestaCorrecta(datos.getRespuestaCorrecta());
     				p.setExplicacion(datos.getExplicacion());
                     return ResponseEntity.ok(service.save(p));
