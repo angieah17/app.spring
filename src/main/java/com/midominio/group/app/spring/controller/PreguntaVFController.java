@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 /* Controlador específico para preguntas Verdadero/Falso.
 Se sirve de AbstractPreguntaService pues esta clase tiene métodos genéricos para todas las preguntas.
 */
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/preguntas/vf")
 public class PreguntaVFController {
