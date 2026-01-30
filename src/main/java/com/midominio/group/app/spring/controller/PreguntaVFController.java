@@ -4,6 +4,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,7 @@ import jakarta.validation.Valid;
 /* Controlador específico para preguntas Verdadero/Falso.
 Se sirve de AbstractPreguntaService pues esta clase tiene métodos genéricos para todas las preguntas.
 */
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/preguntas/vf")
 public class PreguntaVFController {
