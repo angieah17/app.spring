@@ -249,3 +249,137 @@ INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
 (10, 'Django', 1),
 (10, 'Express', 2),
 (10, 'Laravel', 3);
+
+-- ==========================================
+-- Datos iniciales Pregunta Múltiple
+-- ==========================================
+
+-- ===============================
+-- PREGUNTA 11
+-- ===============================
+INSERT IGNORE INTO preguntas (
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+) VALUES (
+    11,
+    '¿Cuáles de los siguientes son lenguajes de programación orientados a objetos?',
+    'Programación',
+    NOW(),
+    TRUE,
+    'MULTIPLE'
+);
+
+INSERT IGNORE INTO preguntas_multiple (
+    id, explicacion
+) VALUES (
+    11,
+    'Java, Python y C++ son lenguajes OOP. JavaScript es un lenguaje orientado a prototipos, aunque también soporta características OOP.'
+);
+
+INSERT IGNORE INTO pregunta_multiple_opciones (pregunta_id, opcion, orden) VALUES
+(11, 'Java', 0),
+(11, 'Python', 1),
+(11, 'JavaScript', 2),
+(11, 'C++', 3);
+
+INSERT IGNORE INTO pregunta_multiple_respuestas (pregunta_id, respuesta_correcta, orden) VALUES
+(11, 0, 0),
+(11, 1, 1),
+(11, 3, 2);
+
+-- ===============================
+-- PREGUNTA 12
+-- ===============================
+INSERT IGNORE INTO preguntas (
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+) VALUES (
+    12,
+    '¿Cuáles de las siguientes son características de Spring Boot?',
+    'Programación',
+    NOW(),
+    TRUE,
+    'MULTIPLE'
+);
+
+INSERT IGNORE INTO preguntas_multiple (
+    id, explicacion
+) VALUES (
+    12,
+    'Spring Boot proporciona configuración automática, servidor embebido y dependencias preconfiguradas. No requiere XML de configuración tradicional.'
+);
+
+INSERT IGNORE INTO pregunta_multiple_opciones (pregunta_id, opcion, orden) VALUES
+(12, 'Autoconfiguration', 0),
+(12, 'Servidor embebido (Tomcat)', 1),
+(12, 'Requiere configuración XML obligatoria', 2),
+(12, 'Starters predefinidos', 3);
+
+INSERT IGNORE INTO pregunta_multiple_respuestas (pregunta_id, respuesta_correcta, orden) VALUES
+(12, 0, 0),
+(12, 1, 1),
+(12, 3, 2);
+
+-- ===============================
+-- PREGUNTA 13
+-- ===============================
+INSERT IGNORE INTO preguntas (
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+) VALUES (
+    13,
+    '¿Cuáles de los siguientes planetas tienen anillos?',
+    'Astronomía',
+    NOW(),
+    TRUE,
+    'MULTIPLE'
+);
+
+INSERT IGNORE INTO preguntas_multiple (
+    id, explicacion
+) VALUES (
+    13,
+    'Saturno, Júpiter, Urano y Neptuno tienen sistemas de anillos. Aunque Saturno es el más conocido por sus anillos visibles.'
+);
+
+INSERT IGNORE INTO pregunta_multiple_opciones (pregunta_id, opcion, orden) VALUES
+(13, 'Tierra', 0),
+(13, 'Saturno', 1),
+(13, 'Júpiter', 2),
+(13, 'Urano', 3),
+(13, 'Neptuno', 4);
+
+INSERT IGNORE INTO pregunta_multiple_respuestas (pregunta_id, respuesta_correcta, orden) VALUES
+(13, 1, 0),
+(13, 2, 1),
+(13, 3, 2),
+(13, 4, 3);
+
+-- ===============================
+-- PREGUNTA 14 (inactiva)
+-- ===============================
+INSERT IGNORE INTO preguntas (
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+) VALUES (
+    14,
+    '¿Cuáles de las siguientes son bases de datos SQL?',
+    'Programación',
+    NOW(),
+    FALSE,
+    'MULTIPLE'
+);
+
+INSERT IGNORE INTO preguntas_multiple (
+    id, explicacion
+) VALUES (
+    14,
+    'MySQL, PostgreSQL y Oracle son bases de datos SQL. MongoDB es una base de datos NoSQL orientada a documentos.'
+);
+
+INSERT IGNORE INTO pregunta_multiple_opciones (pregunta_id, opcion, orden) VALUES
+(14, 'MySQL', 0),
+(14, 'MongoDB', 1),
+(14, 'PostgreSQL', 2),
+(14, 'Oracle', 3);
+
+INSERT IGNORE INTO pregunta_multiple_respuestas (pregunta_id, respuesta_correcta, orden) VALUES
+(14, 0, 0),
+(14, 2, 1),
+(14, 3, 2);
