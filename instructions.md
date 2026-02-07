@@ -1,30 +1,31 @@
 PROYECTO: App Spring Boot + React - CRUD de Preguntas
 ----------------------------------------------------------
 ESTADO ACTUAL:
-- Backend funcionando para PreguntaVF (Verdadero/Falso).
-- Frontend React con PreguntaVF.tsx y servicio funcionando.
-- CRUD completo probado y operativo.
+- Backend funcionando para PreguntaVF (Verdadero/Falso) y PreguntaUnica (Opción única).
+- Frontend React con PreguntaVF.tsx, PreguntaUnica.tsx y servicios funcionando.
+- CRUD completo probado y operativo para ambos tipos.
 
-SIGUIENTE FASE: Crear Pregunta Única (Opción múltiple, una respuesta correcta)
-------------------------------------------------------------------------------
+SIGUIENTE FASE: Crear PreguntaMultiple (Opción múltiple, varias respuestas correctas)
+---------------------------------------------------------------------------------------
 ENFOQUE MÍNIMO Y DIRECTO:
 
 BACKEND (Spring):
-1. PreguntaUnica.java → extiende Pregunta.java
-   - Campos: opciones (List<String>), respuestaCorrecta (int/índice).
-2. PreguntaUnicaRepository.java → interface JpaRepository<PreguntaUnica, Long>
-3. PreguntaUnicaService.java → extiende AbstractPreguntaService<PreguntaUnica>
-4. PreguntaUnicaController.java → igual que PreguntaVFController pero con PreguntaUnica
+1. PreguntaMultiple.java → extiende Pregunta.java
+   - Atributos: opciones (List<String>), respuestasCorrectas (List<Integer> - índices).
+2. PreguntaMultipleRepository.java → interface JpaRepository<PreguntaMultiple, Long>
+3. PreguntaMultipleService.java → extiende AbstractPreguntaService<PreguntaMultiple>
+4. PreguntaMultipleController.java → igual que PreguntaVFController pero con PreguntaMultiple
 
 FRONTEND (React/TypeScript):
-1. PreguntaUnicaService.ts → igual que PreguntaVFService.ts pero con ruta /api/pregunta-unica
-2. PreguntaUnica.tsx → mismo CRUD UI que PreguntaVF.tsx, adaptando campos para opciones múltiples.
+1. PreguntaMultipleService.ts → igual que PreguntaVFService.ts pero con ruta /api/preguntas/multiple
+2. PreguntaMultiple.tsx → mismo CRUD UI que PreguntaUnica.tsx, adaptando para múltiples respuestas (checkboxes en lugar de radio).
 
 REGLAS ESTRICTAS:
 - SOLO funcionalidad base CRUD.
 - REUTILIZAR lo ya existente (AbstractPreguntaService, excepciones, SecurityConfig).
-- MISMOS patrones de código y estructura.
+- MISMOS patrones de código y estructura que PreguntaUnica.
 - NO añadir: Bootstrap, Swagger, gestión de usuarios, seguridad extra, logs, validaciones extras.
+- La única diferencia: múltiples respuestas correctas en lugar de una única.
 
 OBJETIVO FINAL:
-CRUD de PreguntaUnica funcionando igual que PreguntaVF, sin cambios en arquitectura ni añadidos.
+CRUD de PreguntaMultiple funcionando igual que PreguntaUnica, pero permitiendo seleccionar múltiples opciones como correctas.
