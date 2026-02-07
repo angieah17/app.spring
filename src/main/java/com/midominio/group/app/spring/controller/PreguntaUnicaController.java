@@ -68,7 +68,9 @@ public class PreguntaUnicaController {
                 .map(p -> {
                     p.setEnunciado(datos.getEnunciado());
                     p.setTematica(datos.getTematica());
-                    p.setOpciones(datos.getOpciones());
+                 // ← LIMPIA LA LISTA ANTES DE ACTUALIZAR
+                    p.getOpciones().clear();
+                    p.getOpciones().addAll(datos.getOpciones());
                     p.setRespuestaCorrecta(datos.getRespuestaCorrecta());
                     p.setExplicacion(datos.getExplicacion());
                     return ResponseEntity.ok(service.save(p));

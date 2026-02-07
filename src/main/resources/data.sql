@@ -8,7 +8,7 @@
 INSERT IGNORE INTO preguntas (
     id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
 ) VALUES (
-    1, -- Se decide poner manualmente los id en esta fase de desarrollo, teniendo cuidado de no pisar el autoincrement
+    1,
     'La Tierra es plana',
     'Ciencia',
     NOW(),
@@ -21,7 +21,7 @@ INSERT IGNORE INTO preguntas_verdadero_falso (
 ) VALUES (
     1,
     FALSE,
-    'La evidencia cientÃ­fica demuestra que la Tierra tiene forma esfÃ©rica.'
+    'La evidencia científica demuestra que la Tierra tiene forma esférica.'
 );
 
 -- ===============================
@@ -31,8 +31,8 @@ INSERT IGNORE INTO preguntas (
     id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
 ) VALUES (
     2,
-    'Java permite herencia mÃºltiple de clases',
-    'ProgramaciÃ³n',
+    'Java permite herencia múltiple de clases',
+    'Programación',
     NOW(),
     TRUE,
     'VERDADERO_FALSO'
@@ -43,7 +43,7 @@ INSERT IGNORE INTO preguntas_verdadero_falso (
 ) VALUES (
     2,
     FALSE,
-    'Java no soporta herencia mÃºltiple de clases; usa interfaces.'
+    'Java no soporta herencia múltiple de clases; usa interfaces.'
 );
 
 -- ===============================
@@ -54,7 +54,7 @@ INSERT IGNORE INTO preguntas (
 ) VALUES (
     3,
     'El Sol es una estrella',
-    'AstronomÃ­a',
+    'Astronomía',
     NOW(),
     FALSE,
     'VERDADERO_FALSO'
@@ -76,7 +76,7 @@ INSERT IGNORE INTO preguntas (
 ) VALUES (
     4,
     'Spring Boot es un framework de Python',
-    'ProgramaciÃ³n',
+    'Programación',
     NOW(),
     TRUE,
     'VERDADERO_FALSO'
@@ -98,7 +98,7 @@ INSERT IGNORE INTO preguntas (
 ) VALUES (
     5,
     'JPA significa Java Persistence API',
-    'ProgramaciÃ³n',
+    'Programación',
     NOW(),
     TRUE,
     'VERDADERO_FALSO'
@@ -109,7 +109,7 @@ INSERT IGNORE INTO preguntas_verdadero_falso (
 ) VALUES (
     5,
     TRUE,
-    'JPA es la especificaciÃ³n estÃ¡ndar para ORM en Java.'
+    'JPA es la especificación estándar para ORM en Java.'
 );
 
 -- ===============================
@@ -119,7 +119,7 @@ INSERT IGNORE INTO preguntas (
     id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
 ) VALUES (
     6,
-    'El agua hierve a 100Â°C a nivel del mar',
+    'El agua hierve a 100°C a nivel del mar',
     'Ciencia',
     NOW(),
     TRUE,
@@ -131,7 +131,7 @@ INSERT IGNORE INTO preguntas_verdadero_falso (
 ) VALUES (
     6,
     TRUE,
-    'A 1 atm de presiÃ³n, el agua hierve a 100Â°C.'
+    'A 1 atm de presión, el agua hierve a 100°C.'
 );
 
 -- ==========================================
@@ -160,11 +160,11 @@ INSERT IGNORE INTO preguntas_unica (
     'París es la capital y ciudad más grande de Francia.'
 );
 
-INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion) VALUES
-(7, 'Londres'),
-(7, 'París'),
-(7, 'Berlín'),
-(7, 'Madrid');
+INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
+(7, 'Londres', 0),
+(7, 'París', 1),
+(7, 'Berlín', 2),
+(7, 'Madrid', 3);
 
 -- ===============================
 -- PREGUNTA 8
@@ -188,11 +188,11 @@ INSERT IGNORE INTO preguntas_unica (
     'JavaScript es el lenguaje estándar para desarrollo web front-end.'
 );
 
-INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion) VALUES
-(8, 'Python'),
-(8, 'Java'),
-(8, 'JavaScript'),
-(8, 'C++');
+INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
+(8, 'Python', 0),
+(8, 'Java', 1),
+(8, 'JavaScript', 2),
+(8, 'C++', 3);
 
 -- ===============================
 -- PREGUNTA 9
@@ -216,11 +216,11 @@ INSERT IGNORE INTO preguntas_unica (
     'Júpiter es el planeta más grande con un diámetro de 142,984 km.'
 );
 
-INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion) VALUES
-(9, 'Saturno'),
-(9, 'Júpiter'),
-(9, 'Neptuno'),
-(9, 'Urano');
+INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
+(9, 'Saturno', 0),
+(9, 'Júpiter', 1),
+(9, 'Neptuno', 2),
+(9, 'Urano', 3);
 
 -- ===============================
 -- PREGUNTA 10 (inactiva)
@@ -244,8 +244,8 @@ INSERT IGNORE INTO preguntas_unica (
     'Spring Boot es el framework más popular para aplicaciones Java web.'
 );
 
-INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion) VALUES
-(10, 'Spring Boot'),
-(10, 'Django'),
-(10, 'Express'),
-(10, 'Laravel');
+INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
+(10, 'Spring Boot', 0),
+(10, 'Django', 1),
+(10, 'Express', 2),
+(10, 'Laravel', 3);

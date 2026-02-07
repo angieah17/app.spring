@@ -22,6 +22,7 @@ public class PreguntaUnica extends Pregunta {
     )
     @Column(name = "opcion", length = 500)
     @NotEmpty(message = "Debe haber al menos una opción")
+    @OrderColumn(name = "orden") // Añade una columna extra que guarda la posición de cada elemento, evitando duplicaciones
     @Size(min = 3, message = "Debe haber al menos 3 opciones")
     private List<String> opciones = new ArrayList<>();
     
