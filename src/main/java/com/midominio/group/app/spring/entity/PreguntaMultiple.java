@@ -2,6 +2,7 @@ package com.midominio.group.app.spring.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class PreguntaMultiple extends Pregunta {
     
     // 1. ATRIBUTOS
     
+    @NotNull(message = "Las opciones son obligatorias")
     @ElementCollection
     @CollectionTable(
         name = "pregunta_multiple_opciones",
@@ -25,6 +27,7 @@ public class PreguntaMultiple extends Pregunta {
     @Size(min = 3, message = "Debe haber al menos 3 opciones")
     private List<String> opciones = new ArrayList<>();
     
+    @NotNull(message = "Las respuestas correctas son obligatorias")
     @ElementCollection
     @CollectionTable(
         name = "pregunta_multiple_respuestas",
