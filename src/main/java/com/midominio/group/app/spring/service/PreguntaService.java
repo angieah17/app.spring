@@ -2,6 +2,7 @@ package com.midominio.group.app.spring.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import com.midominio.group.app.spring.entity.Pregunta;
 import com.midominio.group.app.spring.exception.ResourceNotFoundException;
@@ -9,6 +10,7 @@ import com.midominio.group.app.spring.repository.PreguntaRepository;
 
 /* Operaciones sobre todas las preguntas */
 
+@Service
 public class PreguntaService {
 	
 	private final PreguntaRepository preguntaRepository;
