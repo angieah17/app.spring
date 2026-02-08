@@ -3,6 +3,7 @@ package com.midominio.group.app.spring.controller;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.midominio.group.app.spring.entity.PreguntaMultiple;
 import com.midominio.group.app.spring.service.PreguntaMultipleService;
@@ -37,7 +39,10 @@ public class PreguntaMultipleController {
     
     // GET /api/preguntas/multiple?page=0&size=10
     @GetMapping
-    public Page<PreguntaMultiple> listar(Pageable pageable) {
+    public Page<PreguntaMultiple> listar(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return service.findAll(pageable);
     }
     
