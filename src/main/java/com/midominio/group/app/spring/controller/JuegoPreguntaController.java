@@ -34,28 +34,11 @@ public class JuegoPreguntaController {
         return juegoPreguntaService.obtenerPreguntaAleatoria();
     }
 
-    /**
-     * Obtiene preguntas activas por temática específica.
-     * 
-     * @param tematica La temática a buscar
-     * @param page Número de página (default 0)
-     * @param size Tamaño de página (default 10)
-     * @return Página de preguntas activas de la temática
-     */
-    @GetMapping("/tematica/{tematica}")
-    public Page<Pregunta> obtenerPreguntasActivasPorTematica(
-            @PathVariable String tematica,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        
-        Pageable pageable = PageRequest.of(page, size);
-        return juegoPreguntaService.obtenerPreguntasActivasPorTematica(tematica, pageable);
-    }
 
     /**
      * Busca preguntas activas por temática y/o tipo.     * 
      * Ejemplo:
-     * GET /api/juego/preguntas/buscar/historia/VF?page=0&size=10
+     * http://localhost:8080/api/juego/preguntas/buscar/Astronomia/VERDADERO_FALSO?page=0&size=10
      */
     @GetMapping("/buscar/{tematica}/{tipoPregunta}")
     public Page<Pregunta> buscarPreguntasActivas(
@@ -95,7 +78,7 @@ public class JuegoPreguntaController {
      * @return Página de preguntas activas que coinciden con los criterios
      * 
      * Ejemplo:
-     * GET /api/juego/preguntas/buscar-avanzado/Francia/historia/VF?page=0&size=10
+     * GET http://localhost:8080/api/juego/preguntas/buscar-avanzado/Francia/historia/UNICA?page=0&size=10
      */
     @GetMapping("/buscar-avanzado/{texto}/{tematica}/{tipoPregunta}")
     public Page<Pregunta> buscarPreguntasActivasAvanzado(
