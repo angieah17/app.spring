@@ -28,13 +28,18 @@ public class JuegoPreguntaService {
      * @throws ResourceNotFoundException si no hay preguntas activas disponibles
      */
     public Pregunta obtenerPreguntaAleatoria() {
-        Page<Pregunta> page = preguntaRepository.findRandomActiva(PageRequest.of(0, 1));
-        
-        if (page.isEmpty()) {
-            throw new ResourceNotFoundException("No hay preguntas activas disponibles");
-        }
-        
-        return page.getContent().get(0);
+        long count = preguntaRepository.countByActivaTrue();
+    
+    if (count == 0) {
+        throw new ResourceNotFoundException("No hay preguntas activas disponibles");
+    }
+    
+    int randomOffset = (int) (Math.random() * count);
+    Page<Pregunta> page = preguntaRepository.findByActivaTrue(
+        PageRequest.of(randomOffset, 1)
+    );
+    
+    return page.getContent().get(0);
     }
     
 
