@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 /**
- * Servicio abstracto con operaciones comunes a todas las preguntas.
+ * Servicio abstracto que sirve como CRUD común por tipo (VF, Única, Múltiple)
  * @param <T> Tipo de pregunta que extiende de Pregunta
  * Esto permite que Java sustituya todas las T por el tipo concreto en tiempo de compilación.
  * Al final, gracias a los genéricos, todos estos métodos funcionarán con el tipo concreto de cada pregunta.
