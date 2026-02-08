@@ -2,10 +2,12 @@ package com.midominio.group.app.spring.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.midominio.group.app.spring.entity.Pregunta;
 import com.midominio.group.app.spring.exception.ResourceNotFoundException;
+import com.midominio.group.app.spring.exception.TematicaInvalidaException;
 import com.midominio.group.app.spring.repository.PreguntaRepository;
 
 /* Operaciones sobre todas las preguntas */
@@ -34,5 +36,41 @@ public class PreguntaService {
         
         return page.getContent().get(0);
     }
+    
+    /**
+     * Obtiene preguntas por temática con paginación.
+     * 
+     * @param tematica La temática a buscar
+     * @param pageable Configuración de paginación
+     * @return Una página con las preguntas que coincidan con la temática
+     * @throws TematicaInvalidaException si no existen preguntas con esa temática
+     */
+    public Page<Pregunta> obtenerPreguntasPorTematica(String tematica, Pageable pageable) {
+    	Page<Pregunta> resultado = preguntaRepository.findByTematica(tematica.trim(), pageable);
+        
+        if (resultado.isEmpty()) {
+            throw new TematicaInvalidaException("No existen preguntas para la temática: " + tematica);
+        }
+        
+        return resultado;
+    }
+
+    /**
+ * Obtiene preguntas activas por temática con paginación.
+ * 
+ * @param tematica La temática a buscar
+ * @param pageable Configuración de paginación
+ * @return Una página con las preguntas activas que coincidan con la temática
+ * @throws TematicaInvalidaException si no existen preguntas activas con esa temática
+ */
+public Page<Pregunta> obtenerPreguntasActivasPorTematica(String tematica, Pageable pageable) {
+    Page<Pregunta> resultado = preguntaRepository.findByTematicaAndActivaTrue(tematica.trim(), pageable);
+    
+    if (resultado.isEmpty()) {
+        throw new TematicaInvalidaException("No existen preguntas activas para la temática: " + tematica);
+    }
+    
+    return resultado;
+}
 
 }
