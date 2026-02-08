@@ -1,7 +1,10 @@
 package com.midominio.group.app.spring.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,4 +28,12 @@ public class PreguntaController {
     public Pregunta obtenerPreguntaAleatoria() {
         return preguntaService.obtenerPreguntaAleatoria();
     }
+    
+    @GetMapping("/tematica/{tematica}")
+    public Page<Pregunta> obtenerPreguntasPorTematica(
+            @PathVariable String tematica,
+            Pageable pageable) {
+        return preguntaService.obtenerPreguntasPorTematica(tematica, pageable);
+    }
+    
 }
