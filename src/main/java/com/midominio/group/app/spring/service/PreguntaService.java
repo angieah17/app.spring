@@ -55,4 +55,22 @@ public class PreguntaService {
         return resultado;
     }
 
+    /**
+ * Obtiene preguntas activas por temática con paginación.
+ * 
+ * @param tematica La temática a buscar
+ * @param pageable Configuración de paginación
+ * @return Una página con las preguntas activas que coincidan con la temática
+ * @throws TematicaInvalidaException si no existen preguntas activas con esa temática
+ */
+public Page<Pregunta> obtenerPreguntasActivasPorTematica(String tematica, Pageable pageable) {
+    Page<Pregunta> resultado = preguntaRepository.findByTematicaAndActivaTrue(tematica.trim(), pageable);
+    
+    if (resultado.isEmpty()) {
+        throw new TematicaInvalidaException("No existen preguntas activas para la temática: " + tematica);
+    }
+    
+    return resultado;
+}
+
 }
