@@ -35,5 +35,12 @@ public class PreguntaController {
             Pageable pageable) {
         return preguntaService.obtenerPreguntasPorTematica(tematica, pageable);
     }
+
+    @GetMapping("/tematica/{tematica}/activas")
+public Page<Pregunta> obtenerPreguntasActivasPorTematica(
+        @PathVariable String tematica,
+        Pageable pageable) {
+    return preguntaService.obtenerPreguntasActivasPorTematica(tematica, pageable);
+}
     
 }
