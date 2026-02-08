@@ -25,14 +25,16 @@ public class PreguntaSpecifications {
     }
 
     /**
-     * Filtra por tipo de pregunta. Si es null o vacío, no aplica filtro.
+     * Filtra por tipo de pregunta usando la columna discriminadora.
+     * Si es null o vacío, no aplica filtro.
      */
     public static Specification<Pregunta> conTipoPregunta(String tipoPregunta) {
         return (root, query, criteriaBuilder) -> {
             if (tipoPregunta == null || tipoPregunta.trim().isEmpty()) {
                 return null; // No aplica filtro
             }
-            return criteriaBuilder.equal(root.get("tipoPregunta"), tipoPregunta.trim());
+            // Usar el nombre de la columna discriminadora definida en @DiscriminatorColumn
+            return criteriaBuilder.equal(root.type(), criteriaBuilder.literal(tipoPregunta.trim()));
         };
     }
 
