@@ -42,6 +42,8 @@ public abstract class Pregunta {
         fechaCreacion = LocalDateTime.now(); //Establece la fecha de creación automáticamente
     }
     
+    @Column(length = 1000)
+    private String explicacion;
     
     //2. CONSTRUCTORES
     
@@ -49,12 +51,13 @@ public abstract class Pregunta {
     	
     }
     
-    public Pregunta(Long id, String enunciado, String tematica, LocalDateTime fechaCreacion, Boolean activa) {
+    public Pregunta(Long id, String enunciado, String tematica, LocalDateTime fechaCreacion, Boolean activa, String explicacion) {
 		this.id = id;
 		this.enunciado = enunciado;
 		this.tematica = tematica;
 		this.fechaCreacion = fechaCreacion;
 		this.activa = activa;
+		this.explicacion = explicacion;
 	}
 
     
