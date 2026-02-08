@@ -29,10 +29,7 @@ public class PreguntaUnica extends Pregunta {
     @NotNull(message = "La respuesta correcta es obligatoria") //valida antes de enviar datos a la base de datos, si la validación falla no se ejecuta ningún SQL, se devuelve un error al cliente indicando que el campo es obligatorio.
     @Column(name = "respuesta_correcta", nullable = false) //valida a nivel de base de datos, no permite que se inserten registros con este campo nulo, garantiza la integridad, incluso si los datos se insertan por fuera de la aplicación Java 
     private Integer respuestaCorrecta; // Índice de la opción correcta (0-based)
-    
-    @Column(length = 1000)
-    private String explicacion;
-    
+        
     
     // 2. CONSTRUCTORES
     
@@ -40,10 +37,9 @@ public class PreguntaUnica extends Pregunta {
         
     }
     
-    public PreguntaUnica(List<String> opciones, Integer respuestaCorrecta, String explicacion) {
+    public PreguntaUnica(List<String> opciones, Integer respuestaCorrecta) {
         this.opciones = opciones;
         this.respuestaCorrecta = respuestaCorrecta;
-        this.explicacion = explicacion;
     }
     
     
@@ -77,11 +73,4 @@ public class PreguntaUnica extends Pregunta {
         this.respuestaCorrecta = respuestaCorrecta;
     }
 
-    public String getExplicacion() {
-        return explicacion;
-    }
-
-    public void setExplicacion(String explicacion) {
-        this.explicacion = explicacion;
-    }
 }

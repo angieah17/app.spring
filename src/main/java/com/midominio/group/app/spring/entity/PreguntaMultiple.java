@@ -38,9 +38,6 @@ public class PreguntaMultiple extends Pregunta {
     @OrderColumn(name = "orden")
     private List<Integer> respuestasCorrectas = new ArrayList<>(); // Índices de las opciones correctas (0-based)
     
-    @Column(length = 1000)
-    private String explicacion;
-    
     
     // 2. CONSTRUCTORES
     
@@ -48,10 +45,9 @@ public class PreguntaMultiple extends Pregunta {
         
     }
     
-    public PreguntaMultiple(List<String> opciones, List<Integer> respuestasCorrectas, String explicacion) {
+    public PreguntaMultiple(List<String> opciones, List<Integer> respuestasCorrectas) {
         this.opciones = opciones;
         this.respuestasCorrectas = respuestasCorrectas;
-        this.explicacion = explicacion;
     }
     
     
@@ -95,11 +91,4 @@ public class PreguntaMultiple extends Pregunta {
         this.respuestasCorrectas = respuestasCorrectas;
     }
 
-    public String getExplicacion() {
-        return explicacion;
-    }
-
-    public void setExplicacion(String explicacion) {
-        this.explicacion = explicacion;
-    }
 }

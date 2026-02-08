@@ -28,7 +28,9 @@ public abstract class Pregunta {
     /* Las BeanValidation de Java dan mensajes claros al usuario
         Las de BD son una última línea de defensa por si alguien accede directamente a la BD */
 
-    @Column(length = 100)
+    @NotBlank(message = "La tematica no puede estar vacía") 
+    @NotNull(message = "La tematica es obligatoria")
+    @Column(nullable = false, length = 100)
     private String tematica;
     
     @Column(name = "fecha_creacion")
@@ -42,6 +44,8 @@ public abstract class Pregunta {
         fechaCreacion = LocalDateTime.now(); //Establece la fecha de creación automáticamente
     }
     
+    @Column(length = 1000)
+    private String explicacion;
     
     //2. CONSTRUCTORES
     
@@ -49,12 +53,13 @@ public abstract class Pregunta {
     	
     }
     
-    public Pregunta(Long id, String enunciado, String tematica, LocalDateTime fechaCreacion, Boolean activa) {
+    public Pregunta(Long id, String enunciado, String tematica, LocalDateTime fechaCreacion, Boolean activa, String explicacion) {
 		this.id = id;
 		this.enunciado = enunciado;
 		this.tematica = tematica;
 		this.fechaCreacion = fechaCreacion;
 		this.activa = activa;
+		this.explicacion = explicacion;
 	}
 
     
@@ -108,10 +113,17 @@ public abstract class Pregunta {
 	public void setActiva(Boolean activa) {
 		this.activa = activa;
 	}
-
-
+	
     
-    //5. HASHCODE y EQUALS
+    public String getExplicacion() {
+		return explicacion;
+	}
+
+	public void setExplicacion(String explicacion) {
+		this.explicacion = explicacion;
+	}
+
+	//5. HASHCODE y EQUALS
     //Para mantener la persistencia en el mapeo de datos 
     @Override
     public boolean equals(Object o) {
