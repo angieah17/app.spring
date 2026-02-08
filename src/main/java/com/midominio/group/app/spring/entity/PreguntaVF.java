@@ -13,8 +13,6 @@ public class PreguntaVF extends Pregunta {
     @Column(name = "respuesta_correcta", nullable = false) //este campo no puede estar vacío
     private Boolean respuestaCorrecta; //Boolean más consistente con JPA que boolean, trabaja mejor con objetos
     
-    @Column(length = 1000)
-    private String explicacion;
     
     
     //CONSTRUCTORES
@@ -23,9 +21,8 @@ public class PreguntaVF extends Pregunta {
     	
     }
     
-    public PreguntaVF(Boolean respuestaCorrecta, String explicacion) {
+    public PreguntaVF(Boolean respuestaCorrecta) {
 		this.respuestaCorrecta = respuestaCorrecta;
-		this.explicacion = explicacion;
 	}
     
     //METODOS
@@ -48,14 +45,5 @@ public class PreguntaVF extends Pregunta {
 	public void setRespuestaCorrecta(Boolean respuestaCorrecta) {
 		this.respuestaCorrecta = respuestaCorrecta;
 	}
-
-	public String getExplicacion() {
-		return explicacion;
-	}
-
-	public void setExplicacion(String explicacion) {
-		this.explicacion = explicacion;
-	}
-    
     
 }
