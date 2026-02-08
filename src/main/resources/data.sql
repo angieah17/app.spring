@@ -6,132 +6,132 @@
 -- PREGUNTA 1
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     1,
     'La Tierra es plana',
     'Ciencia',
     NOW(),
     TRUE,
-    'VERDADERO_FALSO'
+    'VERDADERO_FALSO',
+    'La evidencia científica demuestra que la Tierra tiene forma esférica.'
 );
 
 INSERT IGNORE INTO preguntas_verdadero_falso (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     1,
-    FALSE,
-    'La evidencia científica demuestra que la Tierra tiene forma esférica.'
+    FALSE
 );
 
 -- ===============================
 -- PREGUNTA 2
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     2,
     'Java permite herencia múltiple de clases',
     'Programación',
     NOW(),
     TRUE,
-    'VERDADERO_FALSO'
+    'VERDADERO_FALSO',
+    'Java no soporta herencia múltiple de clases; usa interfaces.'
 );
 
 INSERT IGNORE INTO preguntas_verdadero_falso (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     2,
-    FALSE,
-    'Java no soporta herencia múltiple de clases; usa interfaces.'
+    FALSE
 );
 
 -- ===============================
 -- PREGUNTA 3 (inactiva)
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     3,
     'El Sol es una estrella',
     'Astronomía',
     NOW(),
     FALSE,
-    'VERDADERO_FALSO'
+    'VERDADERO_FALSO',
+    'El Sol es una estrella de tipo espectral G2V.'
 );
 
 INSERT IGNORE INTO preguntas_verdadero_falso (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     3,
-    TRUE,
-    'El Sol es una estrella de tipo espectral G2V.'
+    TRUE
 );
 
 -- ===============================
 -- PREGUNTA 4
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     4,
     'Spring Boot es un framework de Python',
     'Programación',
     NOW(),
     TRUE,
-    'VERDADERO_FALSO'
+    'VERDADERO_FALSO',
+    'Spring Boot pertenece al ecosistema Java/Spring.'
 );
 
 INSERT IGNORE INTO preguntas_verdadero_falso (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     4,
-    FALSE,
-    'Spring Boot pertenece al ecosistema Java/Spring.'
+    FALSE
 );
 
 -- ===============================
 -- PREGUNTA 5
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     5,
     'JPA significa Java Persistence API',
     'Programación',
     NOW(),
     TRUE,
-    'VERDADERO_FALSO'
+    'VERDADERO_FALSO',
+    'JPA es la especificación estándar para ORM en Java.'
 );
 
 INSERT IGNORE INTO preguntas_verdadero_falso (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     5,
-    TRUE,
-    'JPA es la especificación estándar para ORM en Java.'
+    TRUE
 );
 
 -- ===============================
 -- PREGUNTA 6
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     6,
     'El agua hierve a 100°C a nivel del mar',
     'Ciencia',
     NOW(),
     TRUE,
-    'VERDADERO_FALSO'
+    'VERDADERO_FALSO',
+    'A 1 atm de presión, el agua hierve a 100°C.'
 );
 
 INSERT IGNORE INTO preguntas_verdadero_falso (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     6,
-    TRUE,
-    'A 1 atm de presión, el agua hierve a 100°C.'
+    TRUE
 );
 
 -- ==========================================
@@ -142,22 +142,22 @@ INSERT IGNORE INTO preguntas_verdadero_falso (
 -- PREGUNTA 7
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     7,
     '¿Cuál es la capital de Francia?',
     'Geografía',
     NOW(),
     TRUE,
-    'UNICA'
+    'UNICA',
+    'París es la capital y ciudad más grande de Francia.'
 );
 
 INSERT IGNORE INTO preguntas_unica (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     7,
-    1,
-    'París es la capital y ciudad más grande de Francia.'
+    1
 );
 
 INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
@@ -170,22 +170,22 @@ INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
 -- PREGUNTA 8
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     8,
     '¿Qué lenguaje se utiliza principalmente para desarrollo web front-end?',
     'Programación',
     NOW(),
     TRUE,
-    'UNICA'
+    'UNICA',
+    'JavaScript es el lenguaje estándar para desarrollo web front-end.'
 );
 
 INSERT IGNORE INTO preguntas_unica (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     8,
-    2,
-    'JavaScript es el lenguaje estándar para desarrollo web front-end.'
+    2
 );
 
 INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
@@ -198,22 +198,22 @@ INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
 -- PREGUNTA 9
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     9,
     '¿Cuál es el planeta más grande del Sistema Solar?',
     'Ciencia',
     NOW(),
     TRUE,
-    'UNICA'
+    'UNICA',
+    'Júpiter es el planeta más grande con un diámetro de 142,984 km.'
 );
 
 INSERT IGNORE INTO preguntas_unica (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     9,
-    1,
-    'Júpiter es el planeta más grande con un diámetro de 142,984 km.'
+    1
 );
 
 INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
@@ -226,22 +226,22 @@ INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
 -- PREGUNTA 10 (inactiva)
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     10,
     '¿Qué framework Java se utiliza para crear aplicaciones web?',
     'Programación',
     NOW(),
     FALSE,
-    'UNICA'
+    'UNICA',
+    'Spring Boot es el framework más popular para aplicaciones Java web.'
 );
 
 INSERT IGNORE INTO preguntas_unica (
-    id, respuesta_correcta, explicacion
+    id, respuesta_correcta
 ) VALUES (
     10,
-    0,
-    'Spring Boot es el framework más popular para aplicaciones Java web.'
+    0
 );
 
 INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
@@ -258,21 +258,21 @@ INSERT IGNORE INTO pregunta_unica_opciones (pregunta_id, opcion, orden) VALUES
 -- PREGUNTA 11
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     11,
     '¿Cuáles de los siguientes son lenguajes de programación orientados a objetos?',
     'Programación',
     NOW(),
     TRUE,
-    'MULTIPLE'
+    'MULTIPLE',
+    'Java, Python y C++ son lenguajes OOP. JavaScript es un lenguaje orientado a prototipos, aunque también soporta características OOP.'
 );
 
 INSERT IGNORE INTO preguntas_multiple (
-    id, explicacion
+    id
 ) VALUES (
-    11,
-    'Java, Python y C++ son lenguajes OOP. JavaScript es un lenguaje orientado a prototipos, aunque también soporta características OOP.'
+    11
 );
 
 INSERT IGNORE INTO pregunta_multiple_opciones (pregunta_id, opcion, orden) VALUES
@@ -290,21 +290,21 @@ INSERT IGNORE INTO pregunta_multiple_respuestas (pregunta_id, respuesta_correcta
 -- PREGUNTA 12
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     12,
     '¿Cuáles de las siguientes son características de Spring Boot?',
     'Programación',
     NOW(),
     TRUE,
-    'MULTIPLE'
+    'MULTIPLE',
+    'Spring Boot proporciona configuración automática, servidor embebido y dependencias preconfiguradas. No requiere XML de configuración tradicional.'
 );
 
 INSERT IGNORE INTO preguntas_multiple (
-    id, explicacion
+    id
 ) VALUES (
-    12,
-    'Spring Boot proporciona configuración automática, servidor embebido y dependencias preconfiguradas. No requiere XML de configuración tradicional.'
+    12
 );
 
 INSERT IGNORE INTO pregunta_multiple_opciones (pregunta_id, opcion, orden) VALUES
@@ -322,21 +322,21 @@ INSERT IGNORE INTO pregunta_multiple_respuestas (pregunta_id, respuesta_correcta
 -- PREGUNTA 13
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     13,
     '¿Cuáles de los siguientes planetas tienen anillos?',
     'Astronomía',
     NOW(),
     TRUE,
-    'MULTIPLE'
+    'MULTIPLE',
+    'Saturno, Júpiter, Urano y Neptuno tienen sistemas de anillos. Aunque Saturno es el más conocido por sus anillos visibles.'
 );
 
 INSERT IGNORE INTO preguntas_multiple (
-    id, explicacion
+    id
 ) VALUES (
-    13,
-    'Saturno, Júpiter, Urano y Neptuno tienen sistemas de anillos. Aunque Saturno es el más conocido por sus anillos visibles.'
+    13
 );
 
 INSERT IGNORE INTO pregunta_multiple_opciones (pregunta_id, opcion, orden) VALUES
@@ -356,21 +356,21 @@ INSERT IGNORE INTO pregunta_multiple_respuestas (pregunta_id, respuesta_correcta
 -- PREGUNTA 14 (inactiva)
 -- ===============================
 INSERT IGNORE INTO preguntas (
-    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta
+    id, enunciado, tematica, fecha_creacion, activa, tipo_pregunta, explicacion
 ) VALUES (
     14,
     '¿Cuáles de las siguientes son bases de datos SQL?',
     'Programación',
     NOW(),
     FALSE,
-    'MULTIPLE'
+    'MULTIPLE',
+    'MySQL, PostgreSQL y Oracle son bases de datos SQL. MongoDB es una base de datos NoSQL orientada a documentos.'
 );
 
 INSERT IGNORE INTO preguntas_multiple (
-    id, explicacion
+    id
 ) VALUES (
-    14,
-    'MySQL, PostgreSQL y Oracle son bases de datos SQL. MongoDB es una base de datos NoSQL orientada a documentos.'
+    14
 );
 
 INSERT IGNORE INTO pregunta_multiple_opciones (pregunta_id, opcion, orden) VALUES
