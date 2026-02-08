@@ -78,13 +78,13 @@ public class JuegoPreguntaController {
      * @return Página de preguntas activas que coinciden con los criterios
      * 
      * Ejemplo:
-     * GET http://localhost:8080/api/juego/preguntas/buscar-avanzado/Francia/historia/UNICA?page=0&size=10
+     * GET http://localhost:8080/api/juego/preguntas/buscar-avanzado?texto=Francia&tematica=historia&tipoPregunta=UNICA&page=0&size=10
      */
-    @GetMapping("/buscar-avanzado/{texto}/{tematica}/{tipoPregunta}")
+    @GetMapping("/buscar-avanzado")
     public Page<Pregunta> buscarPreguntasActivasAvanzado(
-            @PathVariable String texto,
-            @PathVariable String tematica,
-            @PathVariable String tipoPregunta,
+            @RequestParam(required = false) String texto,
+            @RequestParam(required = false) String tematica,
+            @RequestParam(required = false) String tipoPregunta,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
