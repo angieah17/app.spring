@@ -6,6 +6,9 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * Especificaciones para construir consultas dinámicas sobre Pregunta.
  * Permite combinar criterios de forma flexible (temática, tipo, activa).
+ * 
+ * root: obtener las columnas o hacer los joins.
+ * criteriaBuilder: herramienta para construir las condiciones
  */
 public class PreguntaSpecifications {
 
@@ -17,7 +20,7 @@ public class PreguntaSpecifications {
             if (tematica == null || tematica.trim().isEmpty()) {
                 return null; // No aplica filtro
             }
-            return criteriaBuilder.equal(root.get("tematica"), tematica.trim());
+            return criteriaBuilder.equal(root.get("tematica"), tematica.trim());// // lado izquierdo: p.tematica - lado derecho: valor
         };
     }
 
