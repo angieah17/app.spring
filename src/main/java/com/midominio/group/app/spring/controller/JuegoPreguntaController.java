@@ -38,12 +38,12 @@ public class JuegoPreguntaController {
     /**
      * Busca preguntas activas por temática y/o tipo.     * 
      * Ejemplo:
-     * http://localhost:8080/api/juego/preguntas/buscar/Astronomia/VERDADERO_FALSO?page=0&size=10
+     * http://localhost:8080/api/juego/preguntas/buscar?tematica=Astronomia&tipoPregunta=UNICA&page=0&size=10
      */
-    @GetMapping("/buscar/{tematica}/{tipoPregunta}")
+    @GetMapping("/buscar")
     public Page<Pregunta> buscarPreguntasActivas(
-            @PathVariable String tematica,
-            @PathVariable String tipoPregunta,
+            @RequestParam(required = false) String tematica,
+            @RequestParam(required = false) String tipoPregunta,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
