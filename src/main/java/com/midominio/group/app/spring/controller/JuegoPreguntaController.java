@@ -30,7 +30,7 @@ public class JuegoPreguntaController {
     }
 
 
-    @GetMapping("/tematica/{tematica}/activas")
+    @GetMapping("/tematica/{tematica}")
 public Page<Pregunta> obtenerPreguntasActivasPorTematica(
         @PathVariable String tematica,
         Pageable pageable) {
