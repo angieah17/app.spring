@@ -4,7 +4,6 @@ import com.midominio.group.app.spring.entity.Pregunta;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 /**
  * Repositorio base para todas las preguntas.
@@ -31,14 +30,6 @@ public interface PreguntaRepository extends JpaRepository<Pregunta, Long> {
     long countByTipoPregunta(String tipoPregunta);
     
     
-    //Generar pregunta activa aleatoria
-    @Query("""
-    	    SELECT p
-    	    FROM Pregunta p
-    	    WHERE p.activa = true
-    	    ORDER BY RAND()
-    	""")
-    	Page<Pregunta> findRandomActiva(Pageable pageable);
 
 
 }
