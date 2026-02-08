@@ -43,14 +43,16 @@ public class PreguntaService {
      * @param tematica La temática a buscar
      * @param pageable Configuración de paginación
      * @return Una página con las preguntas que coincidan con la temática
-     * @throws TematicaInvalidaException si la temática es nula o está vacía
+     * @throws TematicaInvalidaException si no existen preguntas con esa temática
      */
     public Page<Pregunta> obtenerPreguntasPorTematica(String tematica, Pageable pageable) {
-        if (tematica == null || tematica.trim().isEmpty()) {
-            throw new TematicaInvalidaException("La temática no puede estar vacía");
+    	Page<Pregunta> resultado = preguntaRepository.findByTematica(tematica.trim(), pageable);
+        
+        if (resultado.isEmpty()) {
+            throw new TematicaInvalidaException("No existen preguntas para la temática: " + tematica);
         }
         
-        return preguntaRepository.findByTematica(tematica, pageable);
+        return resultado;
     }
 
 }
