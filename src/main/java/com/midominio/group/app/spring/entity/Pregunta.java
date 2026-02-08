@@ -28,7 +28,9 @@ public abstract class Pregunta {
     /* Las BeanValidation de Java dan mensajes claros al usuario
         Las de BD son una última línea de defensa por si alguien accede directamente a la BD */
 
-    @Column(length = 100)
+    @NotBlank(message = "La tematica no puede estar vacía") 
+    @NotNull(message = "La tematica es obligatoria")
+    @Column(nullable = false, length = 100)
     private String tematica;
     
     @Column(name = "fecha_creacion")
