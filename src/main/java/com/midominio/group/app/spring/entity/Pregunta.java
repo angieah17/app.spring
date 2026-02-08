@@ -111,10 +111,17 @@ public abstract class Pregunta {
 	public void setActiva(Boolean activa) {
 		this.activa = activa;
 	}
-
-
+	
     
-    //5. HASHCODE y EQUALS
+    public String getExplicacion() {
+		return explicacion;
+	}
+
+	public void setExplicacion(String explicacion) {
+		this.explicacion = explicacion;
+	}
+
+	//5. HASHCODE y EQUALS
     //Para mantener la persistencia en el mapeo de datos 
     @Override
     public boolean equals(Object o) {
