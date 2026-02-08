@@ -1,23 +1,28 @@
 package com.midominio.group.app.spring.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.midominio.group.app.spring.dto.GenerarTestRequest;
+import com.midominio.group.app.spring.dto.Test;
 import com.midominio.group.app.spring.entity.Pregunta;
 import com.midominio.group.app.spring.service.JuegoPreguntaService;
 
-/* Controlador REST para operaciones sobre preguntas activas */
+/* Controlador REST para operaciones sobre preguntas activas y tests */
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/api/juego/preguntas")
+@RequestMapping("/api/juego")
 public class JuegoPreguntaController {
 
     private final JuegoPreguntaService juegoPreguntaService;
@@ -29,18 +34,17 @@ public class JuegoPreguntaController {
     /**
      * Obtiene una pregunta activa aleatoria.
      */
-    @GetMapping("/random")
+    @GetMapping("/preguntas/random")
     public Pregunta obtenerPreguntaAleatoria() {
         return juegoPreguntaService.obtenerPreguntaAleatoria();
     }
-
 
     /**
      * Busca preguntas activas por temática y/o tipo.     * 
      * Ejemplo:
      * http://localhost:8080/api/juego/preguntas/buscar?tematica=Astronomia&tipoPregunta=UNICA&page=0&size=10
      */
-    @GetMapping("/buscar")
+    @GetMapping("/preguntas/buscar")
     public Page<Pregunta> buscarPreguntasActivas(
             @RequestParam(required = false) String tematica,
             @RequestParam(required = false) String tipoPregunta,
@@ -57,7 +61,7 @@ public class JuegoPreguntaController {
      * Ejemplo:
      * GET /api/juego/preguntas/buscar-texto/capital?page=0&size=10
      */
-    @GetMapping("/buscar-texto/{texto}")
+    @GetMapping("/preguntas/buscar-texto/{texto}")
     public Page<Pregunta> buscarPreguntasActivasPorTexto(
             @PathVariable String texto,
             @RequestParam(defaultValue = "0") int page,
@@ -80,7 +84,7 @@ public class JuegoPreguntaController {
      * Ejemplo:
      * GET http://localhost:8080/api/juego/preguntas/buscar-avanzado?texto=Francia&tematica=historia&tipoPregunta=UNICA&page=0&size=10
      */
-    @GetMapping("/buscar-avanzado")
+    @GetMapping("/preguntas/buscar-avanzado")
     public Page<Pregunta> buscarPreguntasActivasAvanzado(
             @RequestParam(required = false) String texto,
             @RequestParam(required = false) String tematica,
@@ -90,6 +94,34 @@ public class JuegoPreguntaController {
         
         Pageable pageable = PageRequest.of(page, size);
         return juegoPreguntaService.buscarPreguntasActivasAvanzado(texto, tematica, tipoPregunta, pageable);
+    }
+
+    /**
+     * Genera un test con X preguntas activas, seleccionadas aleatoriamente.
+     * Soporta filtrado por temáticas y tipos de pregunta.
+     * Las preguntas son sin repetición.
+     * 
+     * Ejemplo:
+     * POST /api/juego/tests/generar
+     * Body:
+     * {
+     *     "cantidad": 10,
+     *     "tematicas": ["Historia", "Geografía"],
+     *     "tipos": ["UNICA", "MULTIPLE"]
+     * }
+     * 
+     * @param request DTO con la configuración del test
+     * @return Test generado con las preguntas aleatorias
+     * @throws BadRequestException si cantidad <= 0
+     * @throws InsufficientQuestionsException si no hay suficientes preguntas con los filtros
+     */
+    @PostMapping("/tests/generar")
+    public Test generarTest(@Valid @RequestBody GenerarTestRequest request) {
+        return juegoPreguntaService.generarTest(
+            request.getCantidad(),
+            request.getTematicas(),
+            request.getTipos()
+        );
     }
 
 }
