@@ -77,7 +77,7 @@ public class TestService {
                 pageable
         );
         
-        List<Pregunta> todasLasPreguntas = preguntasPage.getContent();
+        List<Pregunta> todasLasPreguntas = new ArrayList<>(preguntasPage.getContent());
         
         if (todasLasPreguntas.isEmpty()) {
             throw new ResourceNotFoundException(
