@@ -53,6 +53,25 @@ public class PreguntaSpecifications {
         return (root, query, criteriaBuilder) -> 
             criteriaBuilder.isFalse(root.get("activa"));
     }
+
+    /**
+     * Filtra preguntas por estado (activa/inactiva).
+     * Si es null, no aplica filtro (útil para admin que quiere ver todas).
+     * 
+     * @param activa true para activas, false para inactivas, null para todas
+     */
+    public static Specification<Pregunta> conEstado(Boolean activa) {
+        return (root, query, criteriaBuilder) -> {
+            if (activa == null) {
+                return null; // No aplica filtro, devuelve todas
+            }
+            if (activa) {
+                return criteriaBuilder.isTrue(root.get("activa"));
+            } else {
+                return criteriaBuilder.isFalse(root.get("activa"));
+            }
+        };
+    }
     
     //Búsqueda busqueda por texto (like)
     public static Specification<Pregunta> textoEnEnunciado(String texto) {
