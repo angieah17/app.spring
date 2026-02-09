@@ -138,7 +138,7 @@ public class PreguntaSearchService {
      * @return Una página con todas las preguntas que coincidan con los criterios
      */
     public Page<Pregunta> buscarTodasLasPreguntas(String texto, String tematica, String tipoPregunta, Pageable pageable) {
-        Specification<Pregunta> spec = Specification.where(null) // Sin filtro de activa
+        Specification<Pregunta> spec = Specification.where(inactivas()) // Sin filtro de activa
                                                     .and(textoEnEnunciado(texto))
                                                     .and(conTematica(tematica))
                                                     .and(conTipoPregunta(tipoPregunta));
