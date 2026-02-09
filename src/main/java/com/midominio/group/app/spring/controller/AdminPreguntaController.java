@@ -3,11 +3,20 @@ package com.midominio.group.app.spring.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.midominio.group.app.spring.entity.Pregunta;
+import com.midominio.group.app.spring.entity.PreguntaMultiple;
+import com.midominio.group.app.spring.entity.PreguntaUnica;
+import com.midominio.group.app.spring.entity.PreguntaVF;
+import com.midominio.group.app.spring.service.PreguntaMultipleService;
 import com.midominio.group.app.spring.service.PreguntaSearchService;
+import com.midominio.group.app.spring.service.PreguntaUnicaService;
+import com.midominio.group.app.spring.service.PreguntaVFService;
+
+import jakarta.validation.Valid;
 
 /**
  * Controller REST para la administración de preguntas.
@@ -15,6 +24,7 @@ import com.midominio.group.app.spring.service.PreguntaSearchService;
  * Proporciona endpoints para:
  * - Ver todas las preguntas (activas e inactivas)
  * - Filtrar por temática, tipo y estado de manera combinable
+ * - Crear, editar, activar y desactivar preguntas
  * - Soporte para paginación y ordenamiento
  * 
  * Este controller está pensado para interfaces de administración con listas desplegables.
@@ -26,9 +36,19 @@ import com.midominio.group.app.spring.service.PreguntaSearchService;
 public class AdminPreguntaController {
     
     private final PreguntaSearchService preguntaSearchService;
+    private final PreguntaVFService preguntaVFService;
+    private final PreguntaUnicaService preguntaUnicaService;
+    private final PreguntaMultipleService preguntaMultipleService;
 
-    public AdminPreguntaController(PreguntaSearchService preguntaSearchService) {
+    public AdminPreguntaController(
+            PreguntaSearchService preguntaSearchService,
+            PreguntaVFService preguntaVFService,
+            PreguntaUnicaService preguntaUnicaService,
+            PreguntaMultipleService preguntaMultipleService) {
         this.preguntaSearchService = preguntaSearchService;
+        this.preguntaVFService = preguntaVFService;
+        this.preguntaUnicaService = preguntaUnicaService;
+        this.preguntaMultipleService = preguntaMultipleService;
     }
 
     /**
@@ -111,5 +131,164 @@ public class AdminPreguntaController {
         );
         
         return ResponseEntity.ok(resultado);
+    }
+
+    // ==================== OPERACIONES SOBRE PREGUNTA ESPECÍFICA ====================
+
+    /**
+     * Obtiene una pregunta específica por su ID.
+     * 
+     * @param id El ID de la pregunta
+     * @return ResponseEntity con la pregunta encontrada
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Pregunta> obtenerPreguntaPorId(@PathVariable Long id) {
+        Pregunta pregunta = preguntaSearchService.obtenerPorId(id);
+        return ResponseEntity.ok(pregunta);
+    }
+
+    /**
+     * Actualiza una pregunta de tipo Verdadero/Falso.
+     * Actualiza todos los campos: enunciado, temática, explicación y respuesta correcta.
+     * 
+     * @param id El ID de la pregunta a actualizar
+     * @param datos Los datos actualizados
+     * @return ResponseEntity con la pregunta actualizada
+     */
+    @PutMapping("/verdadero-falso/{id}")
+    public ResponseEntity<PreguntaVF> actualizarPreguntaVF(
+            @PathVariable Long id, 
+            @Valid @RequestBody PreguntaVF datos) {
+        
+        return preguntaVFService.findById(id)
+                .map(p -> {
+                    // Campos heredados
+                    p.setEnunciado(datos.getEnunciado());
+                    p.setTematica(datos.getTematica());
+                    p.setExplicacion(datos.getExplicacion());
+                    // Campo específico
+                    p.setRespuestaCorrecta(datos.getRespuestaCorrecta());
+                    return ResponseEntity.ok(preguntaVFService.save(p));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Actualiza una pregunta de opción única.
+     * Actualiza todos los campos: enunciado, temática, explicación, opciones y respuesta correcta.
+     * 
+     * @param id El ID de la pregunta a actualizar
+     * @param datos Los datos actualizados
+     * @return ResponseEntity con la pregunta actualizada
+     */
+    @PutMapping("/unica/{id}")
+    public ResponseEntity<PreguntaUnica> actualizarPreguntaUnica(
+            @PathVariable Long id, 
+            @Valid @RequestBody PreguntaUnica datos) {
+        
+        return preguntaUnicaService.findById(id)
+                .map(p -> {
+                    // Campos heredados
+                    p.setEnunciado(datos.getEnunciado());
+                    p.setTematica(datos.getTematica());
+                    p.setExplicacion(datos.getExplicacion());
+                    // Campos específicos
+                    p.getOpciones().clear();
+                    p.getOpciones().addAll(datos.getOpciones());
+                    p.setRespuestaCorrecta(datos.getRespuestaCorrecta());
+                    return ResponseEntity.ok(preguntaUnicaService.save(p));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Actualiza una pregunta de opción múltiple.
+     * Actualiza todos los campos: enunciado, temática, explicación, opciones y respuestas correctas.
+     * 
+     * @param id El ID de la pregunta a actualizar
+     * @param datos Los datos actualizados
+     * @return ResponseEntity con la pregunta actualizada
+     */
+    @PutMapping("/multiple/{id}")
+    public ResponseEntity<PreguntaMultiple> actualizarPreguntaMultiple(
+            @PathVariable Long id, 
+            @Valid @RequestBody PreguntaMultiple datos) {
+        
+        return preguntaMultipleService.findById(id)
+                .map(p -> {
+                    // Campos heredados
+                    p.setEnunciado(datos.getEnunciado());
+                    p.setTematica(datos.getTematica());
+                    p.setExplicacion(datos.getExplicacion());
+                    // Campos específicos
+                    p.getOpciones().clear();
+                    p.getOpciones().addAll(datos.getOpciones());
+                    p.getRespuestasCorrectas().clear();
+                    p.getRespuestasCorrectas().addAll(datos.getRespuestasCorrectas());
+                    return ResponseEntity.ok(preguntaMultipleService.save(p));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Activa una pregunta (la hace visible para el juego).
+     * 
+     * @param id El ID de la pregunta a activar
+     * @return ResponseEntity con la pregunta activada
+     */
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<Pregunta> activarPregunta(@PathVariable Long id) {
+        Pregunta pregunta = preguntaSearchService.activar(id);
+        return ResponseEntity.ok(pregunta);
+    }
+
+    /**
+     * Desactiva una pregunta (soft delete - la oculta del juego).
+     * 
+     * @param id El ID de la pregunta a desactivar
+     * @return ResponseEntity con la pregunta desactivada
+     */
+    @PatchMapping("/{id}/desactivar")
+    public ResponseEntity<Pregunta> desactivarPregunta(@PathVariable Long id) {
+        Pregunta pregunta = preguntaSearchService.desactivar(id);
+        return ResponseEntity.ok(pregunta);
+    }
+
+    // ==================== CREAR PREGUNTAS POR TIPO ====================
+
+    /**
+     * Crea una nueva pregunta de tipo Verdadero/Falso.
+     * 
+     * @param pregunta La pregunta a crear
+     * @return ResponseEntity con la pregunta creada y status 201 CREATED
+     */
+    @PostMapping("/verdadero-falso")
+    public ResponseEntity<PreguntaVF> crearPreguntaVF(@Valid @RequestBody PreguntaVF pregunta) {
+        PreguntaVF preguntaCreada = preguntaVFService.crear(pregunta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(preguntaCreada);
+    }
+
+    /**
+     * Crea una nueva pregunta de opción única.
+     * 
+     * @param pregunta La pregunta a crear
+     * @return ResponseEntity con la pregunta creada y status 201 CREATED
+     */
+    @PostMapping("/unica")
+    public ResponseEntity<PreguntaUnica> crearPreguntaUnica(@Valid @RequestBody PreguntaUnica pregunta) {
+        PreguntaUnica preguntaCreada = preguntaUnicaService.crear(pregunta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(preguntaCreada);
+    }
+
+    /**
+     * Crea una nueva pregunta de opción múltiple.
+     * 
+     * @param pregunta La pregunta a crear
+     * @return ResponseEntity con la pregunta creada y status 201 CREATED
+     */
+    @PostMapping("/multiple")
+    public ResponseEntity<PreguntaMultiple> crearPreguntaMultiple(@Valid @RequestBody PreguntaMultiple pregunta) {
+        PreguntaMultiple preguntaCreada = preguntaMultipleService.crear(pregunta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(preguntaCreada);
     }
 }
