@@ -53,9 +53,7 @@ public class PreguntaAdminController {
             @RequestParam(defaultValue = "10") int size) {
         
         Pageable pageable = PageRequest.of(page, size);
-        // NOTA: PreguntaSearchService devuelve activas. 
-        // TODO: Necesitamos un método que devuelva todas (activas e inactivas) para admins
-        return preguntaSearchService.buscarPreguntasActivasAvanzado(texto, tematica, tipoPregunta, pageable);
+        return preguntaSearchService.buscarTodasLasPreguntas(texto, tematica, tipoPregunta, pageable);
     }
 
     /**
@@ -69,7 +67,7 @@ public class PreguntaAdminController {
             @RequestParam(defaultValue = "10") int size) {
         
         Pageable pageable = PageRequest.of(page, size);
-        return preguntaSearchService.obtenerPreguntasActivasPorTematica(tematica, pageable);
+        return preguntaSearchService.obtenerTodasPorTematica(tematica, pageable);
     }
 
     /**
