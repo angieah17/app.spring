@@ -292,4 +292,62 @@ public class TestService {
                 pregunta.getExplicacion()
         );
     }
+
+    /**
+ * Corrige un test SIN guardarlo en BD (para pruebas).
+ */
+public TestResultDTO corregirTestSinGuardar(TestSubmitDTO submitDTO) {
+    
+    if (submitDTO.getRespuestas() == null || submitDTO.getRespuestas().isEmpty()) {
+        throw new BadRequestException("No se recibieron respuestas para corregir");
+    }
+    
+    Set<Long> idsPreguntas = submitDTO.getRespuestas().keySet();
+    List<Pregunta> preguntas = preguntaRepository.findAllById(idsPreguntas);
+    
+    if (preguntas.size() != idsPreguntas.size()) {
+        throw new BadRequestException("Algunas preguntas del test no existen en la base de datos");
+    }
+    
+    List<RevisionPreguntaDTO> revision = new ArrayList<>();
+    int preguntasCorrectas = 0;
+    
+    for (Pregunta pregunta : preguntas) {
+        RespuestaDTO respuestaUsuario = submitDTO.getRespuestas().get(pregunta.getId());
+        
+        if (respuestaUsuario == null) {
+            continue;
+        }
+        
+        boolean esCorrecta = validarRespuesta(pregunta, respuestaUsuario);
+        if (esCorrecta) {
+            preguntasCorrectas++;
+        }
+        
+        RevisionPreguntaDTO revisionPregunta = crearRevision(
+                pregunta, 
+                respuestaUsuario, 
+                esCorrecta
+        );
+        revision.add(revisionPregunta);
+    }
+    
+    int totalPreguntas = preguntas.size();
+    double puntuacion = totalPreguntas > 0 
+            ? (double) preguntasCorrectas / totalPreguntas * 10.0 
+            : 0.0;
+    double porcentajeAcierto = totalPreguntas > 0
+            ? (double) preguntasCorrectas / totalPreguntas * 100.0
+            : 0.0;
+    
+    return new TestResultDTO(
+            Math.round(puntuacion * 100.0) / 100.0,
+            totalPreguntas,
+            preguntasCorrectas,
+            totalPreguntas - preguntasCorrectas,
+            Math.round(porcentajeAcierto * 100.0) / 100.0,
+            revision
+    );
+}
+
 }
