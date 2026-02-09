@@ -47,9 +47,10 @@ public class AdminPreguntaController {
      * Ejemplos de uso:
      * - GET /api/admin/preguntas → todas las preguntas
      * - GET /api/admin/preguntas?activa=true → solo activas
-     * - GET /api/admin/preguntas?tematica=Historia → solo de Historia
+     * - GET /api/admin/preguntas?activa=false → solo inactivas
+     * - GET /api/admin/preguntas?tematica=Programación → solo de Programación
      * - GET /api/admin/preguntas?tipo=MULTIPLE&activa=false → múltiples inactivas
-     * - GET /api/admin/preguntas?tematica=Matemáticas&tipo=UNICA&activa=true&page=0&size=10
+     * - GET /api/admin/preguntas?tematica=Programación&tipo=VERDADERO_FALSO&activa=true&page=0&size=10
      * 
      * @param tematica Temática a buscar (opcional)
      * @param tipo Tipo de pregunta (opcional)
