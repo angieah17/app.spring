@@ -1,6 +1,9 @@
 package com.midominio.group.app.spring.repository;
 
 import com.midominio.group.app.spring.entity.Pregunta;
+import com.midominio.group.app.spring.entity.PreguntaVF;
+import com.midominio.group.app.spring.entity.PreguntaUnica;
+import com.midominio.group.app.spring.entity.PreguntaMultiple;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -31,14 +34,33 @@ public class PreguntaSpecifications {
     /**
      * Filtra por tipo de pregunta usando la columna discriminadora.
      * Si es null o vacío, no aplica filtro.
+     * 
+     * Valores válidos: "VERDADERO_FALSO", "UNICA", "MULTIPLE"
      */
     public static Specification<Pregunta> conTipoPregunta(String tipoPregunta) {
         return (root, query, criteriaBuilder) -> {
             if (tipoPregunta == null || tipoPregunta.trim().isEmpty()) {
                 return null; // No aplica filtro
             }
-            // Usar el nombre de la columna discriminadora definida en @DiscriminatorColumn
-            return criteriaBuilder.equal(root.type(), criteriaBuilder.literal(tipoPregunta.trim()));
+            
+            // Mapear el discriminador string a la clase correspondiente
+            Class<? extends Pregunta> clazz;
+            switch (tipoPregunta.trim().toUpperCase()) {
+                case "VERDADERO_FALSO":
+                    clazz = PreguntaVF.class;
+                    break;
+                case "UNICA":
+                    clazz = PreguntaUnica.class;
+                    break;
+                case "MULTIPLE":
+                    clazz = PreguntaMultiple.class;
+                    break;
+                default:
+                    return null; // Tipo no reconocido, no aplica filtro
+            }
+            
+            // Comparar con el tipo de entidad usando root.type()
+            return criteriaBuilder.equal(root.type(), clazz);
         };
     }
 
