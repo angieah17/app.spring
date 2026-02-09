@@ -29,16 +29,16 @@ public class Usuario {
     @Column(nullable = false, length = 255)
     private String password;
     
-    @NotBlank(message = "El rol no puede estar vacío")
     @NotNull(message = "El rol es obligatorio")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String role; // "ADMIN" o "USER"
-    
-    @Column(name = "fecha_registro")
-    private LocalDateTime fechaRegistro;
+    private RoleEnum role;
     
     @Column(name = "activo")
     private Boolean activo = true;
+    
+    @Column(name = "fecha_registro")
+    private LocalDateTime fechaRegistro;
     
     @PrePersist
     protected void onCreate() {
@@ -51,7 +51,7 @@ public class Usuario {
     public Usuario() {
     }
     
-    public Usuario(String username, String password, String role) {
+    public Usuario(String username, String password, RoleEnum role) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -84,20 +84,12 @@ public class Usuario {
         this.password = password;
     }
 
-    public String getRole() {
+    public RoleEnum getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(RoleEnum role) {
         this.role = role;
-    }
-
-    public LocalDateTime getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setFechaRegistro(LocalDateTime fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
     }
 
     public Boolean getActivo() {
@@ -106,5 +98,13 @@ public class Usuario {
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
+    }
+
+    public LocalDateTime getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 }
