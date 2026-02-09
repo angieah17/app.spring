@@ -4,11 +4,9 @@ import com.midominio.group.app.spring.dto.*;
 import com.midominio.group.app.spring.entity.*;
 import com.midominio.group.app.spring.exception.InsufficientQuestionsException;
 import com.midominio.group.app.spring.exception.TematicaInvalidaException;
-import com.midominio.group.app.spring.repository.PreguntaRepository;
 import com.midominio.group.app.spring.repository.ResultadoTestRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,16 +19,16 @@ import java.util.stream.Collectors;
 @Service
 public class TestService {
     
-    private final PreguntaRepository preguntaRepository;
+    private final PreguntaSearchService preguntaSearchService;
     private final ResultadoTestRepository resultadoTestRepository;
     
     // Map en memoria para almacenar tests generados temporalmente
     // clave: testId, valor: lista de preguntas del test
     private final Map<String, List<Pregunta>> testsTemporales = new HashMap<>();
     
-    public TestService(PreguntaRepository preguntaRepository, 
+    public TestService(PreguntaSearchService preguntaSearchService, 
                       ResultadoTestRepository resultadoTestRepository) {
-        this.preguntaRepository = preguntaRepository;
+        this.preguntaSearchService = preguntaSearchService;
         this.resultadoTestRepository = resultadoTestRepository;
     }
     
@@ -49,9 +47,11 @@ public class TestService {
             cantidad = 10;
         }
         
-        // Obtener preguntas activas con filtros dinámicos
+        // Obtener preguntas activas con filtros dinámicos usando PreguntaSearchService
         Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE); // Obtener todas disponibles
-        List<Pregunta> preguntas = obtenerPreguntasActivasConFiltros(tematica, tipoPregunta, pageable);
+        List<Pregunta> preguntas = preguntaSearchService.buscarPreguntasActivasAvanzado(
+            null, tematica, tipoPregunta, pageable
+        ).getContent();
         
         if (preguntas.isEmpty()) {
             String filtros = tipoPregunta != null ? 
@@ -91,38 +91,7 @@ public class TestService {
         return new TestPlayDTO(testId, tematicaDisplay, preguntasDTO);
     }
     
-    /**
-     * Obtiene preguntas activas aplicando filtros dinámicos.
-     * Los parámetros null se ignoran.
-     */
-    private List<Pregunta> obtenerPreguntasActivasConFiltros(String tematica, 
-                                                             String tipoPregunta, 
-                                                             Pageable pageable) {
-        // Construir especificación dinámicamente
-        Specification<Pregunta> spec = (root, query, criteriaBuilder) -> 
-            criteriaBuilder.equal(root.get("activa"), true);
-        
-        // Filtro por temática
-        if (tematica != null && !tematica.trim().isEmpty()) {
-            final String temTrim = tematica.trim();
-            spec = spec.and((root, query, criteriaBuilder) -> 
-                criteriaBuilder.like(
-                    criteriaBuilder.lower(root.get("tematica")),
-                    "%" + temTrim.toLowerCase() + "%"
-                )
-            );
-        }
-        
-        // Filtro por tipo de pregunta
-        if (tipoPregunta != null && !tipoPregunta.trim().isEmpty()) {
-            final String tipTrim = tipoPregunta.trim();
-            spec = spec.and((root, query, criteriaBuilder) -> 
-                criteriaBuilder.equal(root.get("tipo_pregunta"), tipTrim)
-            );
-        }
-        
-        return preguntaRepository.findAll(spec);
-    }
+
     
     /**
      * Convierte una entidad Pregunta a PreguntaPlayDTO sin revelar la respuesta correcta.
