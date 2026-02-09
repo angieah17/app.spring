@@ -7,11 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.midominio.group.app.spring.dto.GenerarTestRequest;
-import com.midominio.group.app.spring.dto.Test;
 import com.midominio.group.app.spring.entity.Pregunta;
+import com.midominio.group.app.spring.entity.PreguntaVF;
 import com.midominio.group.app.spring.service.PreguntaSearchService;
+import com.midominio.group.app.spring.service.PreguntaVFService;
 
 /**
  * Controlador ADMINISTRATIVO para gestión de preguntas.
@@ -31,10 +30,13 @@ import com.midominio.group.app.spring.service.PreguntaSearchService;
 public class PreguntaAdminController {
 
     private final PreguntaSearchService preguntaSearchService;
-    // TODO: Inyectar PreguntaVFService, PreguntaUnicaService, PreguntaMultipleService para CRUD
+    private final PreguntaVFService preguntaVFService;
+    // TODO: Inyectar PreguntaUnicaService, PreguntaMultipleService para CRUD
 
-    public PreguntaAdminController(PreguntaSearchService preguntaSearchService) {
+    public PreguntaAdminController(PreguntaSearchService preguntaSearchService,
+                                   PreguntaVFService preguntaVFService) {
         this.preguntaSearchService = preguntaSearchService;
+        this.preguntaVFService = preguntaVFService;
     }
 
     /**
@@ -42,7 +44,7 @@ public class PreguntaAdminController {
      * Filtros opcionales: texto, temática, tipo de pregunta.
      * 
      * Ejemplo:
-     * GET /api/admin/preguntas/buscar?texto=Francia&tematica=Historia&tipoPregunta=UNICA&page=0&size=10
+     * GET http://localhost:8080/api/admin/preguntas/buscar?texto=Java&&tematica=Programación&tipoPregunta=VERDADERO_FALSO&page=0&size=10
      */
     @GetMapping("/buscar")
     public Page<Pregunta> buscarPreguntasAvanzado(
@@ -59,6 +61,8 @@ public class PreguntaAdminController {
     /**
      * Obtiene todas las preguntas de una temática (activas e inactivas).
      * Útil para administradores que necesitan ver el historial completo.
+     * 
+     * http://localhost:8080/api/admin/preguntas/tematica/Programación
      */
     @GetMapping("/tematica/{tematica}")
     public Page<Pregunta> obtenerPreguntasPorTematica(
@@ -82,10 +86,9 @@ public class PreguntaAdminController {
      * }
      */
     @PostMapping("/vf")
-    public ResponseEntity<String> crearPreguntaVF() {
-        // TODO: Implementar con PreguntaVFService
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-            .body("Endpoint en desarrollo. Usar PreguntaVFController.");
+    public ResponseEntity<PreguntaVF> crearPreguntaVF(@Valid @RequestBody PreguntaVF pregunta) {
+        PreguntaVF preguntaCreada = preguntaVFService.crear(pregunta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(preguntaCreada);
     }
 
     /**
