@@ -6,18 +6,23 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.midominio.group.app.spring.entity.Pregunta;
+import com.midominio.group.app.spring.exception.ResourceNotFoundException;
 import com.midominio.group.app.spring.repository.PreguntaRepository;
 
 import static com.midominio.group.app.spring.repository.PreguntaSpecifications.*;
 
 /**
- * Servicio de búsqueda y consulta de preguntas para administración.
+ * Servicio de búsqueda y gestión de preguntas para administración.
  * Permite combinar múltiples filtros de forma flexible (temática, tipo, estado).
  * 
  * A diferencia de JuegoPreguntaService, este servicio:
  * - No filtra solo activas por defecto
  * - Permite ver tanto activas como inactivas
- * - Está enfocado en operaciones de administración (CRUD y búsqueda)
+ * - Está enfocado en operaciones de administración (lectura, activación/desactivación)
+ * 
+ * NOTA: Para crear y editar preguntas, usar los servicios específicos por tipo
+ * (PreguntaVFService, PreguntaUnicaService, PreguntaMultipleService) ya que
+ * cada tipo tiene campos específicos diferentes (respuestas, opciones, etc).
  */
 @Service
 public class PreguntaSearchService {
@@ -93,4 +98,43 @@ public class PreguntaSearchService {
         
         return preguntaRepository.findAll(spec, pageable);
     }
+
+    /**
+     * Obtiene una pregunta por su ID.
+     * 
+     * @param id El ID de la pregunta
+     * @return La pregunta encontrada
+     * @throws ResourceNotFoundException si no existe la pregunta
+     */
+    public Pregunta obtenerPorId(Long id) {
+        return preguntaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pregunta no encontrada con id: " + id));
+    }
+
+    /**
+     * Activa una pregunta (soft delete inverso).
+     * 
+     * @param id El ID de la pregunta a activar
+     * @return La pregunta activada
+     * @throws ResourceNotFoundException si no existe la pregunta
+     */
+    public Pregunta activar(Long id) {
+        Pregunta pregunta = obtenerPorId(id);
+        pregunta.setActiva(true);
+        return preguntaRepository.save(pregunta);
+    }
+
+    /**
+     * Desactiva una pregunta (soft delete).
+     * 
+     * @param id El ID de la pregunta a desactivar
+     * @return La pregunta desactivada
+     * @throws ResourceNotFoundException si no existe la pregunta
+     */
+    public Pregunta desactivar(Long id) {
+        Pregunta pregunta = obtenerPorId(id);
+        pregunta.setActiva(false);
+        return preguntaRepository.save(pregunta);
+    }
 }
+
