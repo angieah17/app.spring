@@ -15,8 +15,13 @@ import static com.midominio.group.app.spring.repository.PreguntaSpecifications.*
 
 
 /**
- * Servicio de búsqueda y filtrado de preguntas activas.
- * Usado por PreguntaAdminController para búsquedas avanzadas.
+ * Servicio general de búsqueda y filtrado de preguntas.
+ * 
+ * Proporciona métodos para:
+ * - Búsqueda de preguntas activas (usado por TestService para generar tests)
+ * - Búsqueda de todas las preguntas (usado por PreguntaAdminController para administración)
+ * 
+ * Métodos nombrados claramente para distinguir entre ambos casos de uso.
  */
 @Service
 public class PreguntaSearchService {
@@ -103,6 +108,8 @@ public class PreguntaSearchService {
      * Busca preguntas activas por texto, temática y/o tipo de forma dinámica.
      * Los parámetros null o vacíos no se aplican como filtro.
      * 
+     * CASO DE USO: Generación de tests para usuarios (solo preguntas activas).
+     * 
      * @param texto El texto a buscar en los enunciados (opcional)
      * @param tematica La temática a buscar (opcional)
      * @param tipoPregunta El tipo de pregunta (opcional)
@@ -116,5 +123,39 @@ public class PreguntaSearchService {
                                                     .and(conTipoPregunta(tipoPregunta));
         
         return preguntaRepository.findAll(spec, pageable);
+    }
+
+    /**
+     * Busca TODAS las preguntas (activas e inactivas) por texto, temática y/o tipo.
+     * Los parámetros null o vacíos no se aplican como filtro.
+     * 
+     * CASO DE USO: Panel de administración (ver todas las preguntas incluyendo desactivadas).
+     * 
+     * @param texto El texto a buscar en los enunciados (opcional)
+     * @param tematica La temática a buscar (opcional)
+     * @param tipoPregunta El tipo de pregunta (opcional)
+     * @param pageable Configuración de paginación
+     * @return Una página con todas las preguntas que coincidan con los criterios
+     */
+    public Page<Pregunta> buscarTodasLasPreguntas(String texto, String tematica, String tipoPregunta, Pageable pageable) {
+        Specification<Pregunta> spec = Specification.where(null) // Sin filtro de activa
+                                                    .and(textoEnEnunciado(texto))
+                                                    .and(conTematica(tematica))
+                                                    .and(conTipoPregunta(tipoPregunta));
+        
+        return preguntaRepository.findAll(spec, pageable);
+    }
+
+    /**
+     * Obtiene TODAS las preguntas de una temática (activas e inactivas).
+     * 
+     * CASO DE USO: Panel de administración.
+     * 
+     * @param tematica La temática a buscar
+     * @param pageable Configuración de paginación
+     * @return Una página con todas las preguntas de la temática
+     */
+    public Page<Pregunta> obtenerTodasPorTematica(String tematica, Pageable pageable) {
+        return preguntaRepository.findByTematica(tematica.trim(), pageable);
     }
 }
