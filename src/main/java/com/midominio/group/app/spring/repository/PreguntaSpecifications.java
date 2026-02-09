@@ -13,14 +13,18 @@ import org.springframework.data.jpa.domain.Specification;
 public class PreguntaSpecifications {
 
     /**
-     * Filtra por temática exacta. Si es null o vacía, no aplica filtro.
+     * Filtra por temática (case-insensitive). Si es null o vacía, no aplica filtro.
      */
     public static Specification<Pregunta> conTematica(String tematica) {
         return (root, query, criteriaBuilder) -> {
             if (tematica == null || tematica.trim().isEmpty()) {
                 return null; // No aplica filtro
             }
-            return criteriaBuilder.equal(root.get("tematica"), tematica.trim());// // lado izquierdo: p.tematica - lado derecho: valor
+            // Comparación case-insensitive para evitar problemas con tildes y mayúsculas
+            return criteriaBuilder.equal(
+                criteriaBuilder.lower(root.get("tematica")),
+                tematica.trim().toLowerCase()
+            );
         };
     }
 
