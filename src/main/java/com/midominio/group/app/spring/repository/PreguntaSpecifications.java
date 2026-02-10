@@ -27,14 +27,16 @@ public class PreguntaSpecifications {
     /**
      * Filtra por tipo de pregunta usando la columna discriminadora.
      * Si es null o vacío, no aplica filtro.
+     * La comparación es case-insensitive.
      */
     public static Specification<Pregunta> conTipoPregunta(String tipoPregunta) {
         return (root, query, criteriaBuilder) -> {
             if (tipoPregunta == null || tipoPregunta.trim().isEmpty()) {
                 return null; // No aplica filtro
             }
-            // Usar el nombre de la columna discriminadora definida en @DiscriminatorColumn
-            return criteriaBuilder.equal(root.type(), criteriaBuilder.literal(tipoPregunta.trim()));
+            // Normalizar a mayúsculas para comparación case-insensitive
+            String tipoNormalizado = tipoPregunta.trim().toUpperCase();
+            return criteriaBuilder.equal(root.type(), criteriaBuilder.literal(tipoNormalizado));
         };
     }
 
