@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.midominio.group.app.spring.dto.RevisionPreguntaDTO;
 import com.midominio.group.app.spring.dto.RespuestaDTO;
+import com.midominio.group.app.spring.dto.TestHistorialDTO;
 import com.midominio.group.app.spring.dto.TestPlayDTO;
 import com.midominio.group.app.spring.dto.TestPreguntaDTO;
 import com.midominio.group.app.spring.dto.TestResultDTO;
@@ -371,4 +372,33 @@ public TestResultDTO corregirTestSinGuardar(TestSubmitDTO submitDTO) {
             revision
     );
 }
+
+    /**
+     * Obtiene el historial de tests realizados por un usuario.
+     * 
+     * @param username Nombre del usuario autenticado
+     * @param page Número de página (0-indexed)
+     * @param pageSize Cantidad de resultados por página
+     * @return Page con los registros del historial del usuario ordenados por fecha descendente
+     */
+    public Page<TestHistorialDTO> obtenerHistorialTests(String username, int page, int pageSize) {
+        // Buscar usuario
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + username));
+        
+        // Crear paginación
+        Pageable pageable = PageRequest.of(page, pageSize);
+        
+        // Obtener resultados del usuario ordenados por fecha descendente
+        Page<ResultadoTest> resultados = resultadoTestRepository
+                .findByUsuarioOrderByFechaRealizacionDesc(usuario, pageable);
+        
+        // Convertir a DTOs
+        return resultados.map(resultado -> new TestHistorialDTO(
+                resultado.getId(),
+                resultado.getPuntuacion(),
+                resultado.getTematica(),
+                resultado.getFechaRealizacion()
+        ));
+    }
 }
