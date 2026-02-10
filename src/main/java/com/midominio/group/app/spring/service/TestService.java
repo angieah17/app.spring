@@ -62,6 +62,9 @@ public class TestService {
      */
     public TestPlayDTO generarTest(String tematica, String tipoPregunta, Integer limite) {
         
+        // Validar y normalizar tipoPregunta
+        tipoPregunta = validarYNormalizarTipoPregunta(tipoPregunta);
+        
         // Validar límite
         if (limite == null || limite <= 0) {
             limite = 10; // Valor por defecto
@@ -116,6 +119,9 @@ public class TestService {
     @Transactional
     public TestResultDTO corregirYGuardarTest(TestSubmitDTO submitDTO, String username, 
                                              String tematica, String tipoPregunta) {
+        
+        // Validar y normalizar tipoPregunta
+        tipoPregunta = validarYNormalizarTipoPregunta(tipoPregunta);
         
         // Validar respuestas
         if (submitDTO.getRespuestas() == null || submitDTO.getRespuestas().isEmpty()) {
@@ -206,6 +212,22 @@ public class TestService {
         }
         
         return dto;
+    }
+    
+    /**
+     * Valida y normaliza el tipoPregunta usando el enum TipoPreguntaEnum.
+     * 
+     * @param tipoPregunta El tipo de pregunta a validar (puede ser null)
+     * @return El tipoPregunta normalizado en mayúsculas, o null si el parámetro era null/vacío
+     * @throws BadRequestException si el tipoPregunta no es válido
+     */
+    private String validarYNormalizarTipoPregunta(String tipoPregunta) {
+        try {
+            TipoPreguntaEnum tipo = TipoPreguntaEnum.fromValue(tipoPregunta);
+            return tipo != null ? tipo.getValue() : null;
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
     
     /**
@@ -349,5 +371,4 @@ public TestResultDTO corregirTestSinGuardar(TestSubmitDTO submitDTO) {
             revision
     );
 }
-
 }
