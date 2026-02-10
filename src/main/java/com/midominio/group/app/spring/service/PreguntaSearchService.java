@@ -15,7 +15,7 @@ import static com.midominio.group.app.spring.repository.PreguntaSpecifications.*
  * Servicio de búsqueda y gestión de preguntas para administración.
  * Permite combinar múltiples filtros de forma flexible (temática, tipo, estado).
  * 
- * A diferencia de JuegoPreguntaService, este servicio:
+ * A diferencia de TestService, este servicio:
  * - No filtra solo activas por defecto
  * - Permite ver tanto activas como inactivas
  * - Está enfocado en operaciones de administración (lectura, activación/desactivación)
