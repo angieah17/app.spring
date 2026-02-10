@@ -1,11 +1,13 @@
 package com.midominio.group.app.spring.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import com.midominio.group.app.spring.dto.TestHistorialDTO;
 import com.midominio.group.app.spring.dto.TestPlayDTO;
 import com.midominio.group.app.spring.dto.TestResultDTO;
 import com.midominio.group.app.spring.dto.TestSubmitDTO;
@@ -19,6 +21,7 @@ import jakarta.validation.Valid;
  * Endpoints:
  * - GET /api/tests - Genera un nuevo test con filtros opcionales
  * - POST /api/tests/submit - Corrige un test y guarda el resultado
+ * - GET /api/tests/historial - Obtiene el historial de tests realizados por el usuario
  * 
  * Requiere autenticación para todos los endpoints.
  */
@@ -91,10 +94,37 @@ public class TestController {
     }
 
     @PostMapping("/submit/test")
-public ResponseEntity<TestResultDTO> corregirTestSoloParaPruebas(
-        @Valid @RequestBody TestSubmitDTO submitDTO) {
-    
-    TestResultDTO resultado = testService.corregirTestSinGuardar(submitDTO);
-    return ResponseEntity.ok(resultado);
-}
+    public ResponseEntity<TestResultDTO> corregirTestSoloParaPruebas(
+            @Valid @RequestBody TestSubmitDTO submitDTO) {
+        
+        TestResultDTO resultado = testService.corregirTestSinGuardar(submitDTO);
+        return ResponseEntity.ok(resultado);
+    }
+
+    /**
+     * Obtiene el historial de tests realizados por el usuario autenticado.
+     * 
+     * Permite paginación para navegar a través de los resultados.
+     * Los resultados se ordenan por fecha de realización en orden descendente (más recientes primero).
+     * 
+     * Parámetros opcionales:
+     * - page: Número de página (0-indexed, por defecto 0)
+     * - pageSize: Cantidad de resultados por página (por defecto 10)
+     * 
+     * @param page Número de página (opcional, default 0)
+     * @param pageSize Tamaño de página (opcional, default 10)
+     * @return Page con los registros del historial del usuario
+     */
+    @GetMapping("/historial")
+    public ResponseEntity<Page<TestHistorialDTO>> obtenerHistorialTests(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int pageSize) {
+        
+        // Obtener el usuario autenticado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        
+        Page<TestHistorialDTO> historial = testService.obtenerHistorialTests(username, page, pageSize);
+        return ResponseEntity.ok(historial);
+    }
 }
