@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
@@ -34,16 +32,8 @@ public class Usuario {
     @Column(nullable = false, length = 20)
     private RoleEnum role;
     
-    @Column(name = "activo")
-    private Boolean activo = true;
-    
-    @Column(name = "fecha_registro")
-    private LocalDateTime fechaRegistro;
-    
-    @PrePersist
-    protected void onCreate() {
-        fechaRegistro = LocalDateTime.now();
-    }
+    private boolean enabled = true;
+
     
     
     // 2. CONSTRUCTORES
@@ -56,55 +46,48 @@ public class Usuario {
         this.password = password;
         this.role = role;
     }
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public RoleEnum getRole() {
+		return role;
+	}
+
+	public void setRole(RoleEnum role) {
+		this.role = role;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
     
     
-    // 3. GETTERS Y SETTERS
+ 
     
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public RoleEnum getRole() {
-        return role;
-    }
-
-    public void setRole(RoleEnum role) {
-        this.role = role;
-    }
-
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
-    }
-
-    public LocalDateTime getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setFechaRegistro(LocalDateTime fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
 }

@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/admin/preguntas")
-@CrossOrigin(origins = "*") // Ajusta según tus necesidades de CORS
+@CrossOrigin(origins = "http://localhost:5173") 
 public class AdminPreguntaController {
     
     private final PreguntaSearchService preguntaSearchService;

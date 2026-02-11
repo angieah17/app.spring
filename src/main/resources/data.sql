@@ -1,3 +1,13 @@
+
+INSERT IGNORE INTO usuarios (id, username, password, role, enabled)
+VALUES (
+  1,
+  'admin',
+  '$2a$10$jp2cISXEHqwzxHpICfQ1duw4..RgBu8kp.f4SeRMU6HOA/kIIAjb6',
+  'ADMIN',
+  true
+);
+
 -- ==========================================
 -- DATA.SQL - Datos iniciales Verdadero/Falso
 -- ==========================================

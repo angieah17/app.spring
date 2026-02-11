@@ -27,6 +27,7 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/tests")
+@CrossOrigin(origins = "http://localhost:5173") 
 public class TestController {
     
     private final TestService testService;
@@ -91,14 +92,6 @@ public class TestController {
         );
         
         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
-    }
-
-    @PostMapping("/submit/test")
-    public ResponseEntity<TestResultDTO> corregirTestSoloParaPruebas(
-            @Valid @RequestBody TestSubmitDTO submitDTO) {
-        
-        TestResultDTO resultado = testService.corregirTestSinGuardar(submitDTO);
-        return ResponseEntity.ok(resultado);
     }
 
     /**
