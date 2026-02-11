@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
@@ -35,15 +33,8 @@ public class Usuario {
     private RoleEnum role;
     
     @Column(name = "activo")
-    private Boolean activo = true;
-    
-    @Column(name = "fecha_registro")
-    private LocalDateTime fechaRegistro;
-    
-    @PrePersist
-    protected void onCreate() {
-        fechaRegistro = LocalDateTime.now();
-    }
+    private boolean activo = true;
+
     
     
     // 2. CONSTRUCTORES
@@ -92,19 +83,12 @@ public class Usuario {
         this.role = role;
     }
 
-    public Boolean getActivo() {
+    public boolean getActivo() {
         return activo;
     }
 
-    public void setActivo(Boolean activo) {
+    public void setActivo(boolean activo) {
         this.activo = activo;
     }
 
-    public LocalDateTime getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setFechaRegistro(LocalDateTime fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
 }
