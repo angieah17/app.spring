@@ -21,7 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
 	//1. Se configura el primer filtro de seguridad
-	@Bean
+    @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
@@ -32,7 +32,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults());
+            .httpBasic(Customizer.withDefaults())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
     }
@@ -42,7 +43,8 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
     
-	@Bean
+
+    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
