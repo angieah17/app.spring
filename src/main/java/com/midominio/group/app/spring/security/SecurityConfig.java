@@ -1,4 +1,4 @@
-package com.midominio.group.app.spring.config;
+package com.midominio.group.app.spring.security;
 
 import java.util.List;
 

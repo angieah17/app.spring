@@ -1,11 +1,10 @@
-package com.midominio.group.app.spring.service;
+package com.midominio.group.app.spring.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.midominio.group.app.spring.config.UserDetailsImpl;
 import com.midominio.group.app.spring.entity.Usuario;
 import com.midominio.group.app.spring.repository.UsuarioRepository;
 
