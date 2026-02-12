@@ -50,6 +50,11 @@ public class SecurityConfig {
     @Bean
     AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+
+        //El DaoAuthenticationProvider se encarga de autenticar a los usuarios utilizando un UserDetailsService para cargar los detalles del usuario y un PasswordEncoder para verificar las contraseñas.
+
+        //Espera del front un Authorization: Basic {credentials} donde credentials es el resultado de base64(username:password)
+
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
