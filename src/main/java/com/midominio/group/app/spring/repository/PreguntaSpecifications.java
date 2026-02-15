@@ -1,6 +1,10 @@
 package com.midominio.group.app.spring.repository;
 
+import com.midominio.group.app.spring.entity.PreguntaMultiple;
 import com.midominio.group.app.spring.entity.Pregunta;
+import com.midominio.group.app.spring.entity.PreguntaUnica;
+import com.midominio.group.app.spring.entity.PreguntaVF;
+import com.midominio.group.app.spring.entity.TipoPreguntaEnum;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -34,9 +38,14 @@ public class PreguntaSpecifications {
             if (tipoPregunta == null || tipoPregunta.trim().isEmpty()) {
                 return null; // No aplica filtro
             }
-            // Normalizar a mayúsculas para comparación case-insensitive
-            String tipoNormalizado = tipoPregunta.trim().toUpperCase();
-            return criteriaBuilder.equal(root.type(), criteriaBuilder.literal(tipoNormalizado));
+
+            TipoPreguntaEnum tipo = TipoPreguntaEnum.fromValue(tipoPregunta);
+
+            return switch (tipo) {
+                case VERDADERO_FALSO -> criteriaBuilder.equal(root.type(), PreguntaVF.class);
+                case UNICA -> criteriaBuilder.equal(root.type(), PreguntaUnica.class);
+                case MULTIPLE -> criteriaBuilder.equal(root.type(), PreguntaMultiple.class);
+            };
         };
     }
 
