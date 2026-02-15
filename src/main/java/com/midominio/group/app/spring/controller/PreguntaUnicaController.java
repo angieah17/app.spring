@@ -24,6 +24,7 @@ import jakarta.validation.Valid;
 /* Controlador específico para preguntas de opción única.
    Reusa AbstractPreguntaService para operaciones comunes.
 */
+@Deprecated(since = "2026-02", forRemoval = false)
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/preguntas/unica")

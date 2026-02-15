@@ -24,6 +24,7 @@ import jakarta.validation.Valid;
 /* Controlador específico para preguntas Verdadero/Falso.
 Se sirve de AbstractPreguntaService pues esta clase tiene métodos genéricos para todas las preguntas.
 */
+@Deprecated(since = "2026-02", forRemoval = false)
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/preguntas/vf")
