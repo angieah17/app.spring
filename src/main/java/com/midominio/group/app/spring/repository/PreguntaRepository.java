@@ -4,13 +4,13 @@ import com.midominio.group.app.spring.entity.Pregunta;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * Repositorio base para todas las preguntas.
  * Contiene únicamente consultas genéricas aplicables a todos los tipos.
  */
-public interface PreguntaRepository extends JpaRepository<Pregunta, Long> {
+public interface PreguntaRepository extends JpaRepository<Pregunta, Long>, JpaSpecificationExecutor<Pregunta> {
 
     // Buscar todas las preguntas activas 
     Page<Pregunta> findByActivaTrue(Pageable pageable);
@@ -31,14 +31,24 @@ public interface PreguntaRepository extends JpaRepository<Pregunta, Long> {
     long countByTipoPregunta(String tipoPregunta);
     
     
-    //Generar pregunta activa aleatoria
-    @Query("""
-    	    SELECT p
-    	    FROM Pregunta p
-    	    WHERE p.activa = true
-    	    ORDER BY RAND()
-    	""")
-    	Page<Pregunta> findRandomActiva(Pageable pageable);
+    /*JpaSpecificationExecutor: Spring Data JPA necesita saber que el repositorio acepta Specifications. 
+    Ahora se tienen disponibles métodos: 
 
+    // 1. Encontrar UN solo elemento que cumpla la Specification
+    Optional<T> findOne(Specification<T> spec);
+    
+    // 2. Encontrar TODOS los elementos que cumplan la Specification
+    List<T> findAll(Specification<T> spec);
+    
+    // 3. Encontrar todos con Specification Y paginación
+    Page<T> findAll(Specification<T> spec, Pageable pageable);
+    
+    // 4. Encontrar todos con Specification Y ordenamiento
+    List<T> findAll(Specification<T> spec, Sort sort);
+    
+    // 5. CONTAR cuántos elementos cumplen la Specification
+    long count(Specification<T> spec);
+
+     * */
 
 }
