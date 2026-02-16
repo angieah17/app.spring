@@ -98,6 +98,12 @@
         <scope>test</scope>
     </dependency>
 
+	<!-- CSV PARSER -->
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-csv</artifactId>
+	</dependency>
+
 </dependencies>
 
 
