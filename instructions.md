@@ -44,25 +44,9 @@ Descargar Bootstrap compilado y copiar los archivos a static/vendor/bootstrap/..
 Subir Preguntas desde Archivo (CSV / JSON)
 
 Endpoint: crear UploadController o añadir en PreguntaController:
-@PostMapping("/api/preguntas/upload")
-Método: public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file)
-Detección y parsing:
-Por extensión/content-type: .csv → CSV parser, .json → Jackson.
-CSV: usar com.opencsv:opencsv o org.apache.commons:commons-csv para parsear filas.
-JSON: ObjectMapper para mapear a DTO (crear UploadPreguntaDTO si necesario).
-Mapping:
-Campos esperados (ejemplo): tipo, texto, tematica, opciones (JSON array o separadas por |), respuestasCorrectas (índices separados por ;).
-Para PreguntaMultiple parsear opciones → List<String> y respuestasCorrectas → List<Integer>.
-Servicio: PreguntaUploadService que valida y crea entidades usando los AbstractPreguntaService/repositorios existentes.
-Errores: devolver 400 con mensaje en caso de filas inválidas; reutilizar BadRequestException.
-Swagger / OpenAPI
-
-Dependencia (pom.xml):
-org.springdoc:springdoc-openapi-ui:1.8.0 (ajustar versión según Spring Boot).
-Config: crear OpenApiConfig en src/main/java/.../config con metadata (title, version).
-Acceso: UI en /swagger-ui.html o /swagger-ui/index.html.
-Anotaciones: añadir @Operation(summary=...) y @ApiResponses en controladores públicos (Preguntas, Usuarios, Upload).
-Páginas Error 404 / 500
+POST /admin/preguntas/upload
+Recibe MultipartFile file.
+Llama a preguntaService.importarDesdeCSV(file).
 
 Crear src/main/resources/templates/error/404.html y 500.html reutilizando fragments.
 Spring Boot las servirá automáticamente para esos códigos.
