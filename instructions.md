@@ -1,83 +1,58 @@
 Pasos accionables (resumen corto)
-Añadir templates Thymeleaf y fragments (home, header, footer).
 Agregar assets locales en static/ y descargar Bootstrap.
-Implementar endpoint POST /api/preguntas/upload + servicio parser CSV/JSON.
 Integrar Swagger (springdoc) y anotar controladores públicos.
-Añadir templates de error 404/500.
-Completar endpoints REST CRUD de Usuario y crear componentes React para gestión (si el frontend se añade aquí).
 Estandarizar paginación: backend Page<T> y frontend componente Pagination.
+
 Contexto del proyecto (qué ya existe)
 
-Stack: Spring Boot backend (JPA, Security) y frontend React externo/pendiente.
-Usuarios (parcial): registro y perfil ya implementados.
-Servicio: UsuarioService.java:1-80
-Repositorio: UsuarioRepository.java:1-200
-Auth controller: AuthController.java:1-80
-Seguridad: UserDetailsServiceImpl.java:1-80
-Paginación y búsqueda: ya soportadas en servicios/repositorios (Pageable / Page).
-Ej.: AbstractPreguntaService.java:1-80
-Búsqueda: PreguntaSearchService.java:1-120
-Recursos estáticos / Thymeleaf: actualmente NO existen templates/ ni static/ en resources (sólo application.properties y data.sql).
-application.properties:1-40
-Integración de los PUNTOS FALTANTES — qué implementar y dónde
+Arquitectura actual
 
-Home con Thymeleaf
+Proyecto monolítico Spring Boot con enfoque API-first + vistas Thymeleaf mínimas.
+Capa web en controladores REST y un controlador MVC para Home: HomeController.java.
+Capa de negocio separada por dominio (usuarios, preguntas, tests): service.
+Persistencia con Spring Data JPA y herencia de entidades de preguntas: Pregunta.java.
+Seguridad centralizada con Spring Security + Basic Auth + roles: SecurityConfig.java.
+Stack y configuración
 
-Controller: agregar HomeController en controller con @GetMapping("/") que devuelve "home".
-Template: crear src/main/resources/templates/home.html que inserte fragments header/footer y enlace a assets locales.
-Fragmentos Thymeleaf
+Dependencias principales: Web, Data JPA, Security, Thymeleaf, Validation, MySQL, DevTools, Lombok, Test en pom.xml.
+Java 21 y Spring Boot 4.0.1 definidos en pom.xml:1-40.
+Configuración de BD MySQL local (puerto 3307), ddl-auto update e inicialización SQL en application.properties.
+Entorno docker para MySQL en docker-compose.yml.
+Dominio implementado (preguntas)
 
-Archivos: src/main/resources/templates/fragments/header.html y footer.html.
-Uso: en templates usar th:insert="fragments/header :: header" y th:insert="fragments/footer :: footer".
-Archivos estáticos (estructura sugerida)
+Entidad abstracta Pregunta con campos comunes: enunciado, temática, fecha, estado activo, explicación.
+Estrategia JOINED + discriminador por tipo de pregunta en Pregunta.java.
+Subtipos operativos:
+Verdadero/Falso: PreguntaVF.java
+Selección Única: PreguntaUnica.java
+Selección Múltiple: PreguntaMultiple.java
+Validaciones con Jakarta Validation en entidades y controladores con @Valid.
+APIs implementadas
 
-Crear directorio:
-src/main/resources/static/vendor/bootstrap/css/bootstrap.min.css
-src/main/resources/static/vendor/bootstrap/js/bootstrap.bundle.min.js
-src/main/resources/static/css/ (app css)
-src/main/resources/static/js/ (app js)
-src/main/resources/static/img/
-En header.html incluir <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"> y al final de body incluir <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>.
-Bootstrap local (sin CDN)
+Auth:
+POST /auth/register y GET /auth/me en AuthController.java.
+Usuarios (admin):
+CRUD paginado en /api/usuarios desde UsuarioController.java.
+Administración de preguntas:
+Listado paginado con filtros, búsqueda, detalle, CRUD por tipo, activar/desactivar, upload CSV en AdminPreguntaController.java.
+Tests:
+Generar test, enviar respuestas/corregir y consultar historial en TestController.java.
+Servicios clave
 
-Descargar Bootstrap compilado y copiar los archivos a static/vendor/bootstrap/.... No usar CDN.
-Subir Preguntas desde Archivo (CSV / JSON)
+Búsqueda avanzada y filtros combinables de preguntas + importación CSV en PreguntaSearchService.java.
+Lógica de test completa: selección aleatoria, corrección por tipo, scoring y guardado de resultados en TestService.java.
+Gestión de usuarios (registro, perfil autenticado, CRUD admin) en UsuarioService.java.
+Frontend servidor (Thymeleaf)
 
-Endpoint: crear UploadController o añadir en PreguntaController:
-POST /admin/preguntas/upload
-Recibe MultipartFile file.
-Llama a preguntaService.importarDesdeCSV(file).
+Home disponible en home.html.
+Fragmentos reutilizables en header.html y footer.html.
+Errores personalizados 404/500 en 404.html y 500.html.
+Datos iniciales y ejecución
 
-Crear src/main/resources/templates/error/404.html y 500.html reutilizando fragments.
-Spring Boot las servirá automáticamente para esos códigos.
-Gestión Usuarios (backend REST completo)
+Seed SQL con usuario admin y preguntas de distintos tipos/temáticas/estados en data.sql.
+Seguridad espera roles y protege rutas admin/tests según reglas en SecurityConfig.java:20-60.
 
-Controller: crear UsuarioController en controller/ con endpoints:
-GET /api/usuarios → lista paginada (Pageable).
-GET /api/usuarios/{id}
-POST /api/usuarios
-PUT /api/usuarios/{id}
-DELETE /api/usuarios/{id}
-Service: extender UsuarioService o crear métodos CRUD (list(Pageable), get, create, update, delete).
-DTOs: UsuarioDTO para transporte (evitar exponer password), y mapear manualmente.
-Seguridad: reutilizar SecurityConfig existente; proteger rutas según el patrón actual.
-Gestión Usuarios (React)
-
-Estructura sugerida (si frontend se añade aquí):
-frontend/src/services/UsuarioService.ts
-frontend/src/components/Usuarios/Usuarios.tsx
-frontend/src/components/Usuarios/UsuarioForm.tsx
-frontend/src/components/common/Pagination.tsx
-API contract: endpoints REST del backend descritos arriba; listar debe aceptar page y size, devolver objeto estandarizado:
-{ content: [...], page: 0, size: 10, totalElements: 123, totalPages: 13 }.
-Paginación Total (reutilizable)
-
-Backend: devolver Page<T> o DTO estándar desde controladores listados.
-Frontend: Pagination component que recibe page, size, totalPages, onChange(page) y se reutiliza en todos los listados.
-Dependencias sugeridas (pom.xml)
 
 Swagger:
 <dependency><groupId>org.springdoc</groupId><artifactId>springdoc-openapi-ui</artifactId><version>1.8.0</version></dependency>
-CSV:
-<dependency><groupId>com.opencsv</groupId><artifactId>opencsv</artifactId><version>5.7.1</version></dependency>
 Ajustar versiones según la versión de Spring Boot en pom.xml.
