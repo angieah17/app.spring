@@ -4,10 +4,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.midominio.group.app.spring.entity.Pregunta;
+import com.midominio.group.app.spring.entity.PreguntaMultiple;
+import com.midominio.group.app.spring.entity.PreguntaUnica;
+import com.midominio.group.app.spring.entity.PreguntaVF;
 import com.midominio.group.app.spring.exception.ResourceNotFoundException;
 import com.midominio.group.app.spring.repository.PreguntaRepository;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.midominio.group.app.spring.repository.PreguntaSpecifications.*;
 
@@ -135,6 +146,143 @@ public class PreguntaSearchService {
         Pregunta pregunta = obtenerPorId(id);
         pregunta.setActiva(false);
         return preguntaRepository.save(pregunta);
+    }
+
+    public int importarDesdeCSV(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("El archivo está vacío");
+        }
+
+        int creadas = 0;
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            boolean primeraLinea = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (primeraLinea) {
+                    primeraLinea = false;
+                    continue;
+                }
+
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+
+                String[] data = line.split(";", -1);
+
+                String tipo = valor(data, 0);
+                String enunciado = valor(data, 1);
+                String tematica = valor(data, 2);
+
+                if (tipo == null || tipo.isEmpty()) {
+                    throw new RuntimeException("Tipo no válido");
+                }
+                if (enunciado == null || enunciado.isEmpty()) {
+                    throw new RuntimeException("Enunciado vacío");
+                }
+                if (tematica == null || tematica.isEmpty()) {
+                    throw new RuntimeException("Temática vacía");
+                }
+
+                Pregunta pregunta = crearPregunta(tipo, data);
+                pregunta.setEnunciado(enunciado);
+                pregunta.setTematica(tematica);
+                pregunta.setExplicacion(valor(data, 3));
+
+                preguntaRepository.save(pregunta);
+                creadas++;
+            }
+
+            return creadas;
+        } catch (IOException e) {
+            throw new RuntimeException("Error procesando archivo", e);
+        }
+    }
+
+    private Pregunta crearPregunta(String tipo, String[] data) {
+        return switch (tipo) {
+            case "VERDADERO_FALSO" -> {
+                PreguntaVF preguntaVF = new PreguntaVF();
+                preguntaVF.setRespuestaCorrecta(parseBoolean(valor(data, 5)));
+                yield preguntaVF;
+            }
+            case "UNICA" -> {
+                PreguntaUnica preguntaUnica = new PreguntaUnica();
+                preguntaUnica.setOpciones(parseOpciones(valor(data, 4)));
+                preguntaUnica.setRespuestaCorrecta(parseIndiceUnico(valor(data, 5)));
+                yield preguntaUnica;
+            }
+            case "MULTIPLE" -> {
+                PreguntaMultiple preguntaMultiple = new PreguntaMultiple();
+                preguntaMultiple.setOpciones(parseOpciones(valor(data, 4)));
+                preguntaMultiple.setRespuestasCorrectas(parseIndicesMultiples(valor(data, 5)));
+                yield preguntaMultiple;
+            }
+            default -> throw new RuntimeException("Tipo de pregunta no soportado: " + tipo);
+        };
+    }
+
+    private String valor(String[] data, int indice) {
+        if (indice < 0 || indice >= data.length) {
+            return null;
+        }
+        String valor = data[indice];
+        return valor == null ? null : valor.trim();
+    }
+
+    private List<String> parseOpciones(String texto) {
+        List<String> opciones = new ArrayList<>();
+        if (texto == null || texto.isBlank()) {
+            return opciones;
+        }
+
+        String[] partes = texto.split("\\|");
+        for (String parte : partes) {
+            String limpia = parte == null ? null : parte.trim();
+            if (limpia != null && !limpia.isEmpty()) {
+                opciones.add(limpia);
+            }
+        }
+        return opciones;
+    }
+
+    private Integer parseIndiceUnico(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return null;
+        }
+
+        String limpio = texto.split(";")[0].trim();
+        return Integer.parseInt(limpio);
+    }
+
+    private List<Integer> parseIndicesMultiples(String texto) {
+        List<Integer> respuestas = new ArrayList<>();
+        if (texto == null || texto.isBlank()) {
+            return respuestas;
+        }
+
+        String[] partes = texto.split(";");
+        for (String parte : partes) {
+            String limpia = parte == null ? null : parte.trim();
+            if (limpia != null && !limpia.isEmpty()) {
+                respuestas.add(Integer.parseInt(limpia));
+            }
+        }
+        return respuestas;
+    }
+
+    private Boolean parseBoolean(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return null;
+        }
+
+        String valor = texto.trim().toLowerCase();
+        return switch (valor) {
+            case "true", "verdadero", "1", "v" -> true;
+            case "false", "falso", "0", "f" -> false;
+            default -> throw new RuntimeException("Valor booleano inválido: " + texto);
+        };
     }
 }
 
