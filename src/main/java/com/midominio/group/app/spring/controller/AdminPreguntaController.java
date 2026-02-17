@@ -15,6 +15,7 @@ import com.midominio.group.app.spring.service.PreguntaMultipleService;
 import com.midominio.group.app.spring.service.PreguntaSearchService;
 import com.midominio.group.app.spring.service.PreguntaUnicaService;
 import com.midominio.group.app.spring.service.PreguntaVFService;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
 
@@ -49,6 +50,12 @@ public class AdminPreguntaController {
         this.preguntaVFService = preguntaVFService;
         this.preguntaUnicaService = preguntaUnicaService;
         this.preguntaMultipleService = preguntaMultipleService;
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<Integer> upload(@RequestParam("file") MultipartFile file) {
+        int totalCreadas = preguntaSearchService.importarDesdeCSV(file);
+        return ResponseEntity.ok(totalCreadas);
     }
 
     /**
