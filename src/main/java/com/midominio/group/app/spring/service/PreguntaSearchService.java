@@ -4,10 +4,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.midominio.group.app.spring.entity.Pregunta;
+import com.midominio.group.app.spring.entity.PreguntaMultiple;
+import com.midominio.group.app.spring.entity.PreguntaUnica;
+import com.midominio.group.app.spring.entity.PreguntaVF;
 import com.midominio.group.app.spring.exception.ResourceNotFoundException;
 import com.midominio.group.app.spring.repository.PreguntaRepository;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.midominio.group.app.spring.repository.PreguntaSpecifications.*;
 
@@ -135,6 +146,73 @@ public class PreguntaSearchService {
         Pregunta pregunta = obtenerPorId(id);
         pregunta.setActiva(false);
         return preguntaRepository.save(pregunta);
+    }
+
+    public int importarDesdeCSV(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("Archivo vacío");
+        }
+
+        int creadas = 0;
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            boolean primera = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (primera) {
+                    primera = false;
+                    continue;
+                }
+
+                if (line.isBlank()) continue;
+
+                String[] data = line.split(";");
+
+                String tipo = data[0].trim();
+                String enunciado = data[1].trim();
+                String tematica = data[2].trim();
+
+                Pregunta pregunta;
+
+                switch (tipo) {
+                    case "VERDADERO_FALSO" -> {
+                        PreguntaVF p = new PreguntaVF();
+                        p.setRespuestaCorrecta(Boolean.parseBoolean(data[5].trim()));
+                        pregunta = p;
+                    }
+                    case "UNICA" -> {
+                        PreguntaUnica p = new PreguntaUnica();
+                        p.setOpciones(new ArrayList<>(Arrays.stream(data[4].split("\\|")).map(String::trim).toList()));
+                        p.setRespuestaCorrecta(Integer.parseInt(data[5].trim()));
+                        pregunta = p;
+                    }
+                    case "MULTIPLE" -> {
+                        PreguntaMultiple p = new PreguntaMultiple();
+                        p.setOpciones(new ArrayList<>(Arrays.stream(data[4].split("\\|")).map(String::trim).toList()));
+                        p.setRespuestasCorrectas(
+                                new ArrayList<>(Arrays.stream(data[5].split(","))
+                                        .map(String::trim)
+                                        .map(Integer::parseInt)
+                                        .toList())
+                        );
+                        pregunta = p;
+                    }
+                    default -> throw new RuntimeException("Tipo no válido");
+                }
+
+                pregunta.setEnunciado(enunciado);
+                pregunta.setTematica(tematica);
+                pregunta.setExplicacion(data.length > 3 ? data[3].trim() : null);
+
+                preguntaRepository.save(pregunta);
+                creadas++;
+            }
+
+            return creadas;
+        } catch (IOException e) {
+            throw new RuntimeException("Error leyendo archivo");
+        }
     }
 }
 
