@@ -11,16 +11,13 @@ import com.midominio.group.app.spring.entity.PreguntaUnica;
 import com.midominio.group.app.spring.entity.PreguntaVF;
 import com.midominio.group.app.spring.entity.TipoPreguntaEnum;
 import com.midominio.group.app.spring.exception.BadRequestException;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -83,13 +80,9 @@ public class PreguntaUploadService {
     }
 
     private List<UploadPreguntaDTO> leerArchivo(MultipartFile file) {
-        String formato = detectarFormato(file);
-
+        detectarFormato(file);
         try {
-            if ("csv".equals(formato)) {
-                return leerCsv(file);
-            }
-            return leerJson(file);
+            return leerCsv(file);
         } catch (IOException ex) {
             throw new BadRequestException("No se pudo leer el archivo: " + ex.getMessage());
         }
@@ -103,34 +96,39 @@ public class PreguntaUploadService {
             return "csv";
         }
 
-        if (nombre.endsWith(".json") || contentType.contains("json")) {
-            return "json";
-        }
-
-        throw new BadRequestException("Formato no soportado. Use archivos .csv o .json");
+        throw new BadRequestException("Formato no soportado. Solo se permiten archivos .csv");
     }
 
     private List<UploadPreguntaDTO> leerCsv(MultipartFile file) throws IOException {
         List<UploadPreguntaDTO> resultado = new ArrayList<>();
 
-        try (Reader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8);
-             CSVParser parser = CSVFormat.DEFAULT
-                     .builder()
-                     .setHeader()
-                     .setSkipHeaderRecord(true)
-                     .setIgnoreEmptyLines(true)
-                     .setTrim(true)
-                     .build()
-                     .parse(reader)) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            int numeroLinea = 0;
 
-            for (CSVRecord record : parser) {
+            while ((line = reader.readLine()) != null) {
+                numeroLinea++;
+
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+
+                if (numeroLinea == 1 && line.toLowerCase(Locale.ROOT).startsWith("tipo;")) {
+                    continue;
+                }
+
+                String[] data = line.split(";", -1);
+                if (data.length < 3) {
+                    throw new BadRequestException("Fila CSV inválida: se requieren al menos tipo;texto;tematica");
+                }
+
                 UploadPreguntaDTO dto = new UploadPreguntaDTO();
-                dto.setTipo(getCsv(record, "tipo"));
-                dto.setTexto(getCsv(record, "texto"));
-                dto.setTematica(getCsv(record, "tematica"));
-                dto.setExplicacion(getCsv(record, "explicacion"));
-                dto.setOpciones(TextNode.valueOf(getCsv(record, "opciones")));
-                dto.setRespuestasCorrectas(TextNode.valueOf(getCsv(record, "respuestasCorrectas")));
+                dto.setTipo(valueAt(data, 0));
+                dto.setTexto(valueAt(data, 1));
+                dto.setTematica(valueAt(data, 2));
+                dto.setExplicacion(valueAt(data, 3));
+                dto.setOpciones(TextNode.valueOf(valueAt(data, 4)));
+                dto.setRespuestasCorrectas(TextNode.valueOf(valueAt(data, 5)));
                 resultado.add(dto);
             }
         }
@@ -138,43 +136,12 @@ public class PreguntaUploadService {
         return resultado;
     }
 
-    private String getCsv(CSVRecord record, String columna) {
-        if (!record.isMapped(columna)) {
+    private String valueAt(String[] data, int index) {
+        if (index < 0 || index >= data.length) {
             return null;
         }
-        String valor = record.get(columna);
+        String valor = data[index];
         return valor == null ? null : valor.trim();
-    }
-
-    private List<UploadPreguntaDTO> leerJson(MultipartFile file) throws IOException {
-        JsonNode root = objectMapper.readTree(file.getInputStream());
-
-        if (root == null || root.isNull()) {
-            throw new BadRequestException("El JSON está vacío");
-        }
-
-        List<UploadPreguntaDTO> resultado = new ArrayList<>();
-
-        if (root.isArray()) {
-            for (JsonNode item : root) {
-                resultado.add(objectMapper.convertValue(item, UploadPreguntaDTO.class));
-            }
-            return resultado;
-        }
-
-        if (root.isObject() && root.has("preguntas") && root.get("preguntas").isArray()) {
-            for (JsonNode item : root.get("preguntas")) {
-                resultado.add(objectMapper.convertValue(item, UploadPreguntaDTO.class));
-            }
-            return resultado;
-        }
-
-        if (root.isObject()) {
-            resultado.add(objectMapper.convertValue(root, UploadPreguntaDTO.class));
-            return resultado;
-        }
-
-        throw new BadRequestException("Estructura JSON inválida. Debe ser objeto o array");
     }
 
     private void crearPregunta(UploadPreguntaDTO dto) {
