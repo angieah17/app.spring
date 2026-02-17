@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.midominio.group.app.spring.repository.PreguntaSpecifications.*;
@@ -182,18 +183,18 @@ public class PreguntaSearchService {
                     }
                     case "UNICA" -> {
                         PreguntaUnica p = new PreguntaUnica();
-                        p.setOpciones(Arrays.stream(data[4].split("\\|")).map(String::trim).toList());
+                        p.setOpciones(new ArrayList<>(Arrays.stream(data[4].split("\\|")).map(String::trim).toList()));
                         p.setRespuestaCorrecta(Integer.parseInt(data[5].trim()));
                         pregunta = p;
                     }
                     case "MULTIPLE" -> {
                         PreguntaMultiple p = new PreguntaMultiple();
-                        p.setOpciones(Arrays.stream(data[4].split("\\|")).map(String::trim).toList());
+                        p.setOpciones(new ArrayList<>(Arrays.stream(data[4].split("\\|")).map(String::trim).toList()));
                         p.setRespuestasCorrectas(
-                                Arrays.stream(data[5].split(","))
+                                new ArrayList<>(Arrays.stream(data[5].split(","))
                                         .map(String::trim)
                                         .map(Integer::parseInt)
-                                        .toList()
+                                        .toList())
                         );
                         pregunta = p;
                     }
