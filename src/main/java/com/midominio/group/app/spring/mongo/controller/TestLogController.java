@@ -20,7 +20,7 @@ public class TestLogController {
     public TestLogController(TestLogService testLogService) {
         this.testLogService = testLogService;
     }
-
+//para probar: http://localhost:8080/api/mongo/logs?username=mongo_user&nota=7.5 
     @PostMapping
     public TestLog saveLog(@RequestParam String username, @RequestParam Double nota) {
         return testLogService.saveLog(username, nota);
