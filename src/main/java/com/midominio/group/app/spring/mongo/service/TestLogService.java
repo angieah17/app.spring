@@ -25,4 +25,8 @@ public class TestLogService {
     public List<TestLog> findAll() {
         return testLogRepository.findAll();
     }
+
+    public List<TestLog> findByUsername(String username) {
+        return testLogRepository.findByUsernameOrderByFechaDesc(username);
+    }
 }
