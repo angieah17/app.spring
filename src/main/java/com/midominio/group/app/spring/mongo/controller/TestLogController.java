@@ -1,5 +1,6 @@
 package com.midominio.group.app.spring.mongo.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,14 +21,19 @@ public class TestLogController {
     public TestLogController(TestLogService testLogService) {
         this.testLogService = testLogService;
     }
-//para probar: http://localhost:8080/api/mongo/logs?username=mongo_user&nota=7.5 
     @PostMapping
-    public TestLog saveLog(@RequestParam String username, @RequestParam Double nota) {
+    public TestLog saveLog(@RequestParam Double nota, Principal principal) {
+        String username = principal.getName();
         return testLogService.saveLog(username, nota);
     }
 
     @GetMapping
     public List<TestLog> findAll() {
         return testLogService.findAll();
+    }
+
+    @GetMapping("/me")
+    public List<TestLog> findMine(Principal principal) {
+        return testLogService.findByUsername(principal.getName());
     }
 }
