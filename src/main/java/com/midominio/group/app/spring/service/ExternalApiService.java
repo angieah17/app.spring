@@ -2,6 +2,8 @@ package com.midominio.group.app.spring.service;
 
 import java.util.Map;
 
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
@@ -23,13 +25,18 @@ public class ExternalApiService {
 
     public ExternalActivityDTO obtenerActividadAleatoria() {
         try {
-            ResponseEntity<Map> response = restTemplate.getForEntity(EXTERNAL_URL, Map.class);
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    EXTERNAL_URL,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             if (!response.getStatusCode().is2xxSuccessful()) {
                 throw new RuntimeException("Error al consumir API externa: código HTTP " + response.getStatusCode().value());
             }
 
-            Map<?, ?> body = response.getBody();
+            Map<String, Object> body = response.getBody();
             if (body == null) {
                 throw new RuntimeException("La API externa devolvió una respuesta vacía");
             }
