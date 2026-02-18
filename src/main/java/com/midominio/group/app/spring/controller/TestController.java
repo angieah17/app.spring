@@ -14,6 +14,8 @@ import com.midominio.group.app.spring.dto.TestSubmitDTO;
 import com.midominio.group.app.spring.service.TestService;
 
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Controlador REST para gestión de tests evaluables.
@@ -28,6 +30,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/tests")
 @CrossOrigin(origins = "http://localhost:5173") 
+@Tag(name = "Tests", description = "Generación, corrección e historial de tests")
 public class TestController {
     
     private final TestService testService;
@@ -50,6 +53,7 @@ public class TestController {
      * @return TestPlayDTO con las preguntas del test
      */
     @GetMapping
+    @Operation(summary = "Generar un nuevo test")
     public ResponseEntity<TestPlayDTO> generarTest(
             @RequestParam(required = false) String tematica,
             @RequestParam(required = false) String tipoPregunta,
@@ -75,6 +79,7 @@ public class TestController {
      * @return TestResultDTO con la corrección y puntuación
      */
     @PostMapping("/submit")
+    @Operation(summary = "Enviar y corregir un test")
     public ResponseEntity<TestResultDTO> corregirTest(
             @Valid @RequestBody TestSubmitDTO submitDTO,
             @RequestParam(required = false) String tematica,
@@ -109,6 +114,7 @@ public class TestController {
      * @return Page con los registros del historial del usuario
      */
     @GetMapping("/historial")
+    @Operation(summary = "Obtener historial de tests del usuario autenticado")
     public ResponseEntity<Page<TestHistorialDTO>> obtenerHistorialTests(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int pageSize) {

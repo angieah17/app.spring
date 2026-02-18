@@ -18,6 +18,8 @@ import com.midominio.group.app.spring.service.PreguntaVFService;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Controller REST para la administración de preguntas.
@@ -34,6 +36,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/admin/preguntas")
 @CrossOrigin(origins = "http://localhost:5173") 
+@Tag(name = "Administración Preguntas", description = "CRUD y búsqueda para preguntas (admin)")
 public class AdminPreguntaController {
     
     private final PreguntaSearchService preguntaSearchService;
@@ -53,6 +56,7 @@ public class AdminPreguntaController {
     }
 
     @PostMapping("/upload")
+    @Operation(summary = "Importar preguntas desde CSV")
     public ResponseEntity<Integer> upload(@RequestParam("file") MultipartFile file) {
         int totalCreadas = preguntaSearchService.importarDesdeCSV(file);
         return ResponseEntity.ok(totalCreadas);
@@ -86,6 +90,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la página de preguntas que cumplen los criterios
      */
     @GetMapping
+    @Operation(summary = "Listar preguntas con filtros y paginación")
     public ResponseEntity<Page<Pregunta>> obtenerPreguntasConFiltros(
             @RequestParam(required = false) String tematica,
             @RequestParam(required = false) String tipo,
@@ -122,6 +127,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la página de preguntas encontradas
      */
     @GetMapping("/buscar")
+    @Operation(summary = "Buscar preguntas por texto y filtros")
     public ResponseEntity<Page<Pregunta>> buscarPorTexto(
             @RequestParam String texto,
             @RequestParam(required = false) String tematica,
@@ -149,6 +155,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la pregunta encontrada
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener pregunta por ID")
     public ResponseEntity<Pregunta> obtenerPreguntaPorId(@PathVariable Long id) {
         Pregunta pregunta = preguntaSearchService.obtenerPorId(id);
         return ResponseEntity.ok(pregunta);
@@ -163,6 +170,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la pregunta actualizada
      */
     @PutMapping("/verdadero-falso/{id}")
+    @Operation(summary = "Actualizar pregunta VF")
     public ResponseEntity<PreguntaVF> actualizarPreguntaVF(
             @PathVariable Long id, 
             @Valid @RequestBody PreguntaVF datos) {
@@ -189,6 +197,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la pregunta actualizada
      */
     @PutMapping("/unica/{id}")
+    @Operation(summary = "Actualizar pregunta única")
     public ResponseEntity<PreguntaUnica> actualizarPreguntaUnica(
             @PathVariable Long id, 
             @Valid @RequestBody PreguntaUnica datos) {
@@ -217,6 +226,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la pregunta actualizada
      */
     @PutMapping("/multiple/{id}")
+    @Operation(summary = "Actualizar pregunta múltiple")
     public ResponseEntity<PreguntaMultiple> actualizarPreguntaMultiple(
             @PathVariable Long id, 
             @Valid @RequestBody PreguntaMultiple datos) {
@@ -244,6 +254,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la pregunta activada
      */
     @PatchMapping("/{id}/activar")
+    @Operation(summary = "Activar pregunta")
     public ResponseEntity<Pregunta> activarPregunta(@PathVariable Long id) {
         Pregunta pregunta = preguntaSearchService.activar(id);
         return ResponseEntity.ok(pregunta);
@@ -256,6 +267,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la pregunta desactivada
      */
     @PatchMapping("/{id}/desactivar")
+    @Operation(summary = "Desactivar pregunta")
     public ResponseEntity<Pregunta> desactivarPregunta(@PathVariable Long id) {
         Pregunta pregunta = preguntaSearchService.desactivar(id);
         return ResponseEntity.ok(pregunta);
@@ -270,6 +282,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la pregunta creada y status 201 CREATED
      */
     @PostMapping("/verdadero-falso")
+    @Operation(summary = "Crear pregunta VF")
     public ResponseEntity<PreguntaVF> crearPreguntaVF(@Valid @RequestBody PreguntaVF pregunta) {
         PreguntaVF preguntaCreada = preguntaVFService.crear(pregunta);
         return ResponseEntity.status(HttpStatus.CREATED).body(preguntaCreada);
@@ -282,6 +295,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la pregunta creada y status 201 CREATED
      */
     @PostMapping("/unica")
+    @Operation(summary = "Crear pregunta única")
     public ResponseEntity<PreguntaUnica> crearPreguntaUnica(@Valid @RequestBody PreguntaUnica pregunta) {
         PreguntaUnica preguntaCreada = preguntaUnicaService.crear(pregunta);
         return ResponseEntity.status(HttpStatus.CREATED).body(preguntaCreada);
@@ -294,6 +308,7 @@ public class AdminPreguntaController {
      * @return ResponseEntity con la pregunta creada y status 201 CREATED
      */
     @PostMapping("/multiple")
+    @Operation(summary = "Crear pregunta múltiple")
     public ResponseEntity<PreguntaMultiple> crearPreguntaMultiple(@Valid @RequestBody PreguntaMultiple pregunta) {
         PreguntaMultiple preguntaCreada = preguntaMultipleService.crear(pregunta);
         return ResponseEntity.status(HttpStatus.CREATED).body(preguntaCreada);
