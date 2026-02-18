@@ -21,6 +21,7 @@ public class TestLogController {
     public TestLogController(TestLogService testLogService) {
         this.testLogService = testLogService;
     }
+    //http://localhost:8080/api/mongo/logs?nota=8.2
     @PostMapping
     public TestLog saveLog(@RequestParam Double nota, Principal principal) {
         String username = principal.getName();
