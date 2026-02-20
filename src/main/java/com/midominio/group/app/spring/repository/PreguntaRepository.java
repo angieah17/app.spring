@@ -21,14 +21,15 @@ public interface PreguntaRepository extends JpaRepository<Pregunta, Long>, JpaSp
     // Buscar preguntas activas por temática
     Page<Pregunta> findByTematicaAndActivaTrue(String tematica, Pageable pageable);
 
-    // Buscar preguntas por tipo de pregunta (usa el getter abstracto `getTipoPregunta()`)
-    Page<Pregunta> findByTipoPregunta(String tipoPregunta, Pageable pageable);
 
     // Contar cuántas preguntas activas existen
     long countByActivaTrue();
 
-    // Contar preguntas por tipo de pregunta
-    long countByTipoPregunta(String tipoPregunta);
+    // NOTE: La búsqueda por tipo se realiza mediante Specifications (ver PreguntaSpecifications.conTipoPregunta)
+    // y no a través de métodos query-derived, porque el tipo se almacena en la columna discriminator
+    // `tipo_pregunta` y no existe como atributo mapeado en la entidad base. Usar:
+    //   preguntaRepository.findAll(spec, pageable)
+    //   preguntaRepository.count(spec)
     
     
     /*JpaSpecificationExecutor: Spring Data JPA necesita saber que el repositorio acepta Specifications. 
