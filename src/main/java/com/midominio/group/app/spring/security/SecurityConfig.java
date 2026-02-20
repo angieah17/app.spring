@@ -35,11 +35,15 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                // Allow static resources, auth endpoints and public API
                 .requestMatchers("/", "/css/**", "/js/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/external/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/public/preguntas").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                // Allow OpenAPI/Swagger UI without authentication
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                // Application protected endpoints
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/preguntas/**").hasRole("ADMIN")
                 .requestMatchers("/api/tests/**").authenticated()
