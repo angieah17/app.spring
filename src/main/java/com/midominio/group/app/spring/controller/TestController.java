@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.midominio.group.app.spring.dto.TestHistorialDTO;
 import com.midominio.group.app.spring.dto.TestPlayDTO;
@@ -28,6 +30,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/tests")
 @CrossOrigin(origins = "http://localhost:5173") 
+@Tag(name = "Tests", description = "Operaciones para generar, enviar y consultar tests")
 public class TestController {
     
     private final TestService testService;
@@ -49,6 +52,7 @@ public class TestController {
      * @param limite Número máximo de preguntas (opcional, default 10)
      * @return TestPlayDTO con las preguntas del test
      */
+    @Operation(summary = "Generar nuevo test con filtros opcionales")
     @GetMapping
     public ResponseEntity<TestPlayDTO> generarTest(
             @RequestParam(required = false) String tematica,
@@ -74,6 +78,7 @@ public class TestController {
      * @param tipoPregunta Tipo de pregunta del test (para estadísticas)
      * @return TestResultDTO con la corrección y puntuación
      */
+    @Operation(summary = "Enviar y corregir un test (guardar resultado)")
     @PostMapping("/submit")
     public ResponseEntity<TestResultDTO> corregirTest(
             @Valid @RequestBody TestSubmitDTO submitDTO,
@@ -108,6 +113,7 @@ public class TestController {
      * @param pageSize Tamaño de página (opcional, default 10)
      * @return Page con los registros del historial del usuario
      */
+    @Operation(summary = "Obtener historial de tests del usuario autenticado")
     @GetMapping("/historial")
     public ResponseEntity<Page<TestHistorialDTO>> obtenerHistorialTests(
             @RequestParam(required = false, defaultValue = "0") int page,
